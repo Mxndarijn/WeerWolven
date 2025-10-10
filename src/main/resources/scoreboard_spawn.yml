@@ -1,0 +1,12 @@
+title: "<gold><b>WeerWolven"
+lines:
+  - " <gray><st><b>---------------"
+  - " <dark_green><b>Speler Informatie:"
+  - " <gray>Speler:<gray> %player_name%"
+  - " <gray>Rank: %luckperms_suffix%"
+  - " <gray>Gespeelde Games: 0"
+  - " <gray><b>-x-"
+  - " <dark_green><b>Stats:"
+  - " <gray><st><b>---------------"
+  - " <gray>Doe mee op:"
+  - " <#04de3e>play.mollenjacht.eu"

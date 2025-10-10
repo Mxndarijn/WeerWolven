@@ -1,0 +1,13 @@
+title: "<gray>%%map_name%%"
+lines:
+  - " "
+  - " <gray>Status:"
+  - "  %%game_status%% <gray>(%%game_time%%)"
+  - " "
+  - " <gray>Deelnemers: "
+  - "  <gray>Levend: %%alive_players%%"
+  - "  <gray>Dood: %%dead_players%%"
+  - " "
+  - " <gray>Spectators: %%spectator_count%%"
+  - " "
+  - " <#04de3e>play.mollenjacht.eu"

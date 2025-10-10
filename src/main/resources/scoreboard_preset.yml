@@ -1,0 +1,8 @@
+title: "<gray>%%preset_name%%"
+lines:
+  - " "
+  - " <gray>Kleuren: %%colors_amount%%"
+  - " "
+  - " <gray>Configured: %%configured%%"
+  - " "
+  - " <#04de3e>play.mollenjacht.eu"

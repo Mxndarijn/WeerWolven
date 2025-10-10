@@ -1,0 +1,98 @@
+plugins {
+    id 'java'
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id "com.gradleup.shadow" version "8.3.3"
+}
+
+group = 'me.mxndarijn'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "jitpack.io"
+        url = 'https://jitpack.io/'
+    }
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name ="placeholderapi"
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        name = "lucko"
+        url = "https://repo.lucko.me/"
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+
+    //MxLib
+    implementation 'com.github.Mxndarijn:MxLib:1.0.14'
+
+    // Lombok - enabled for compileOnly with annotation processors
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.mojang:authlib:1.5.21'
+    compileOnly 'net.dmulloy2:ProtocolLib:5.4.0'
+    compileOnly 'net.luckperms:api:5.4'
+
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly 'com.github.LeonMangler:SuperVanish:6.2.18-3'
+    implementation fileTree(dir: 'libsImpl', include: ['*.jar'])
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'com.zaxxer:HikariCP:6.3.0'
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    runtimeOnly("com.mysql:mysql-connector-j:9.0.0")
+    implementation("org.hibernate.orm:hibernate-core:6.5.0.Final")
+    implementation("com.googlecode.json-simple:json-simple:1.1")
+
+}
+
+tasks {
+    runServer {
+        // Configure the Minecraft version for our task.
+        // This is the only required configuration besides applying the plugin.
+        // Your plugin's jar (or shadowJar if present) will be used automatically.
+        minecraftVersion("1.21")
+    }
+}
+
+def targetJavaVersion = 21
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('paper-plugin.yml') {
+        expand props
+    }
+}

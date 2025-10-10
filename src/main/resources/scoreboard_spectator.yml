@@ -1,0 +1,9 @@
+title: "<gray>%%map_name%%"
+lines:
+  - " "
+  - " <gray>Status:"
+  - "  %%game_status%% <gray>(<gray>%%game_time%%<gray>)"
+  - " <gray>Host:"
+  - "   <gray>%%host%%"
+  - " "
+  - " <#04de3e>play.mollenjacht.eu"

@@ -1,0 +1,16 @@
+# Messages
+# A placeholder begins with %% and ends with %%
+# Example: %%1%% or %%2%%
+
+language-name: "Nederlands"
+no-permission: "<red>Je hebt hier geen permissie voor."
+no-player: "<red>Om dit te kunnen doen moet je een speler zijn."
+not-correct-world: "<red>Dit kan je niet in deze wereld doen."
+error-while-executing-command: "<red>Er ging iets fout tijdens het uitvoeren van het commando, probeer het opnieuw of vraag een stafflid om hulp."
+error-while-executing-item: "<red>Er ging iets fout tijdens het uitvoeren van het item, probeer het opnieuw of vraag een stafflid om hulp."
+preset-loading-inventory: "<gray>Inventory aan het ophalen..."
+preset-inventory-saved: "<gray>Inventory opgeslagen."
+command-presets-now-in-preset: "<green>Je bent nu in een preset, hierin kan je alles aanpassen."
+command-presets-world-could-not-be-loaded: "<red>Wereld not niet worden geladen. Vraag een stafflid op hulp."
+command-presets-world-not-found-but-loaded: "<red>Wereld kon niet worden gevonden. Vraag een stafflid om hulp."
+command-presets-loading-world: "<gray>Wereld aan het inladen..."

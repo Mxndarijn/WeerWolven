@@ -1,0 +1,316 @@
+# HOW TO USE
+# For this example we will use the site: https://minecraft-heads.com/custom-heads/miscellaneous/61007-youtube
+
+# Scroll down to Loot table: (Its also in other value)
+# Here you will find:
+# {
+#                          "type": "item",
+#                          "name": "minecraft:skull",
+#                          "weight": 50,
+#                          "functions": [
+#                            {
+#                              "function": "set_data",
+#                              "data": 3
+#                            },
+#                            {
+#                              "function": "set_nbt",
+#                              "tag": "{display:{Name:\"YouTube\"},SkullOwner:{Id:\"4520769e-a23b-4665-b3b0-8be999f2df2e\",Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI0ZTgyNWIyNWZmNzkzOGI1OGFmNTJmNThlNGQ1NGVjNTE0M2JkNWExYjQ4NGYxZmY5ZGQ2YmEwYWNhOWRjYiJ9fX0=\"}]}}}"
+#                            }
+#                          ]
+#                        }
+
+# We need the textures value.
+# So in this case it will become:
+# eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI0ZTgyNWIyNWZmNzkzOGI1OGFmNTJmNThlNGQ1NGVjNTE0M2JkNWExYjQ4NGYxZmY5ZGQ2YmEwYWNhOWRjYiJ9fX0=
+# Paste this value in this yml file like:
+#youtube:
+#  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI0ZTgyNWIyNWZmNzkzOGI1OGFmNTJmNThlNGQ1NGVjNTE0M2JkNWExYjQ4NGYxZmY5ZGQ2YmEwYWNhOWRjYiJ9fX0=
+#  type: manually-added
+#  name: Youtube-Logo
+
+# Player Skulls
+# If you want to add a skull and want that the server automatically checks if the skin is up to date, make the type player: Uncomment # to implement :)
+#Mxndarijn: #Normally dont use names, use uuids?
+#  value: ewogICJ0aW1lc3RhbXAiIDogMTY4MTU3MjgwMzE1NywKICAicHJvZmlsZUlkIiA6ICJmOGFmZGNjZDEzOGY0YWZiOGM0Y2M3OWViZjQyZTBkMSIsCiAgInByb2ZpbGVOYW1lIiA6ICJNeG5kYXJpam4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFlZDRiNzZhMTkzMThlNWE2Nzg4Y2NlNDc0N2UwMzFjOTc0M2JkMDZhZTRhZWM4YjNhM2QyYTRlZDkzYjRlOSIKICAgIH0KICB9Cn0=
+#  uuid: f8afdccd-138f-4afb-8c4c-c79ebf42e0d1
+#  type: player
+#  name: Mxndarijn
+
+youtube:
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI0ZTgyNWIyNWZmNzkzOGI1OGFmNTJmNThlNGQ1NGVjNTE0M2JkNWExYjQ4NGYxZmY5ZGQ2YmEwYWNhOWRjYiJ9fX0=
+  type: manually-added
+  name: Youtube-Logo
+f8afdccd-138f-4afb-8c4c-c79ebf42e0d1:
+  value: ewogICJ0aW1lc3RhbXAiIDogMTY4MTU3MjgwMzE1NywKICAicHJvZmlsZUlkIiA6ICJmOGFmZGNjZDEzOGY0YWZiOGM0Y2M3OWViZjQyZTBkMSIsCiAgInByb2ZpbGVOYW1lIiA6ICJNeG5kYXJpam4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFlZDRiNzZhMTkzMThlNWE2Nzg4Y2NlNDc0N2UwMzFjOTc0M2JkMDZhZTRhZWM4YjNhM2QyYTRlZDkzYjRlOSIKICAgIH0KICB9Cn0=
+  uuid: f8afdccd-138f-4afb-8c4c-c79ebf42e0d1
+  type: player
+  name: Mxndarijn
+arrow-left:
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==
+  type: manually-added
+  name: Pijl die naar links wijst
+arrow-right:
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19
+  type: manually-added
+  name: Pijl die naar rechts wijst
+question-mark:
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0=
+  type: manually-added
+  name: Vraagteken
+red-minus:
+  name: Rode min
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU0YjhiOGQyMzYyYzg2NGUwNjIzMDE0ODdkOTRkMzI3MmE2YjU3MGFmYmY4MGMyYzViMTQ4Yzk1NDU3OWQ0NiJ9fX0=
+  type: manually-added
+red-block:
+  name: Rode kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTQ4ZDdkMWUwM2UxYWYxNDViMDEyNWFiODQxMjg1NjcyYjQyMTI2NWRhMmFiOTE1MDE1ZjkwNTg0MzhiYTJkOCJ9fX0=
+  type: manually-added
+orange-block:
+  name: Oranje kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI5MTYyMmM1MTA0ZjFjYzk0YTJiNGQzM2FkN2IyYzliMjE1ZmY5NDk1MDFlOGMyNTBjZmQ1YTg2MWU2YjkwNyJ9fX0=
+  type: manually-added
+yellow-block:
+  name: Gele kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmMxODNmMzYwMWY2NzI5M2E1MWUyNTc3ZGJlYTA1YTQ2MDJlZmE0MzNjYzM1NGU2M2ZjZjdmYmUwMjY0ODZiYyJ9fX0=
+  type: manually-added
+light-green-block:
+  name: Licht-Groene kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWMwMWY2Nzk2ZWI2M2QwZThhNzU5MjgxZDAzN2Y3YjM4NDMwOTBmOWE0NTZhNzRmNzg2ZDA0OTA2NWM5MTRjNyJ9fX0=
+  type: manually-added
+green-block:
+  name: Groene kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmZlYzNkMjVhZTBkMTQ3YzM0MmM0NTM3MGUwZTQzMzAwYTRlNDhhNWI0M2Y5YmI4NThiYWJmZjc1NjE0NGRhYyJ9fX0=
+  type: manually-added
+cyan-block:
+  name: Cyan kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQwMjEyNjVkMDVmM2UzNTI0YzkwYTgwMGQ0ZDE3ZTY2ZjkzZGFiY2ZiZmFhMTNkYmJiNWIxNTczMGVlMmRkMyJ9fX0=
+  type: manually-added
+light-blue-block:
+  name: Licht-Blauwe kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU0ODc4OWI5NjhjNzBlYzlkMWRlMjcyZDBiYjkzYTcwMTM0ZjJjMGU2MGFjYjc1ZThkNDU1YTE2NTBmMzk3NyJ9fX0=
+  type: manually-added
+blue-block:
+  name: Bluawe kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjIyMWVlMDAwZDc1Y2M0MGZmZTlhZTY5NDg0MTI5ZjIxZTIxYzliM2I0NGFkZWIyMDNjYTRmNmJiMGU4MzI1ZSJ9fX0=
+  type: manually-added
+purple-block:
+  name: Paarse kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmY5N2I0YmY1MWNlMmIyMmQ2ZWI1ZWNjMTU0YTdhYjM5M2Y2YTRiMGIxNDJjODg0NjE1MzE3ZDAxOWQ4OTYzOSJ9fX0=
+  type: manually-added
+magenta-block:
+  name: Magenta kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmM4YjgxMmRjZDdiYmFiNGUyMzc5ZWQzNzk2MDI0YjNkYzgzYzEzYmRmZmUxZTFhMWNmZDQxYWI5ZjRmYjYzZCJ9fX0=
+  type: manually-added
+pink-block:
+  name: Roze kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzMxYzYxZGM3ZjJkMDljYTIwZDc1ZTU5NDU3NzdlNWYwNmQwNjI5MzE4Y2QyNTFhZDhkNGQ5ZTgxZjAwNTE4YyJ9fX0=
+  type: manually-added
+brown-block:
+  name: Bruine kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmIzYTk3MmZjNDkwMzZjM2RmZWMyZWEwZWNkODM5YThkY2RhZTc1ODQyMGJkNmYyMzNhZjk5ZjNhMGM2NzIwYSJ9fX0=
+  type: manually-added
+black-block:
+  name: Zwarte kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTE5ZDY0NjEyYmE4ZDFjMDJlZTI3MGQ4NDUxOWFkMGNkNzMxNzViYzQ1ZTdkZGEzZjYzOTY4NmIyY2U2NDU5NiJ9fX0=
+  type: manually-added
+gray-block:
+  name: Grijs kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjI1NTRkZGE4MGVhNjRiMThiYzM3NWI4MWNlMWVkMTkwN2ZjODFhZWE2YjFjZjNjNGY3YWQzMTQ0Mzg5ZjY0YyJ9fX0=
+  type: manually-added
+light-gray-block:
+  name: Licht-Grijze kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjIzZDdlNjU1ZGViZGQ1OTFkMDk5ZDc2ZmYwMDBkNzU1NWJlNGFlMTFiMWUyNmI5YWRmMjQ0YWUwMjJiMjljOCJ9fX0=
+  type: manually-added
+white-block:
+  name: Witte kleur
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg4NGQ1ZGFiZTA3M2UyOGU2YjdlYjE2NmZmNjEyNDc5MDVjNzlmODM4YjZmNTc1MmU3YWQ0MDYwOTFlZWFmMyJ9fX0=
+  type: manually-added
+a5d51153-a58a-4b7b-9f3c-4ebd7f7e4bc7:
+  name: Appa
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmVkZmZiZjljZTg5MWM2MjdmZDcyYzhkYjI3N2RlNmU1YjcyOWQ4MzA3OGNlN2JhYmJmNGQxMDJmNWMxNjI0MCJ9fX0=
+  type: manually-added
+trapdoor:
+  name: Trapdoor
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDBlOTNhMTMxOTJkZTU2N2ExM2M5MmUxODNhY2RhYjE5NDg4ZGNhMGE0MmRiMzQxMmMyYzgxY2YyNzUzNCJ9fX0=
+  type: manually-added
+number-one:
+  name: Getal 1
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFiYzJiY2ZiMmJkMzc1OWU2YjFlODZmYzdhNzk1ODVlMTEyN2RkMzU3ZmMyMDI4OTNmOWRlMjQxYmM5ZTUzMCJ9fX0=
+number-two:
+  name: Getal 2
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNkOWVlZWU4ODM0Njg4ODFkODM4NDhhNDZiZjMwMTI0ODVjMjNmNzU3NTNiOGZiZTg0ODczNDE0MTk4NDcifX19
+number-three:
+  name: Getal 3
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWQ0ZWFlMTM5MzM4NjBhNmRmNWU4ZTk1NTY5M2I5NWE4YzNiMTVjMzZiOGI1ODc1MzJhYzA5OTZiYzM3ZTUifX19
+number-four:
+  name: Getal 4
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDJlNzhmYjIyNDI0MjMyZGMyN2I4MWZiY2I0N2ZkMjRjMWFjZjc2MDk4NzUzZjJkOWMyODU5ODI4N2RiNSJ9fX0=
+number-five:
+  name: Getal 5
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQ1N2UzYmM4OGE2NTczMGUzMWExNGUzZjQxZTAzOGE1ZWNmMDg5MWE2YzI0MzY0M2I4ZTU0NzZhZTIifX19
+number-six:
+  name: Getal 6
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzM0YjM2ZGU3ZDY3OWI4YmJjNzI1NDk5YWRhZWYyNGRjNTE4ZjVhZTIzZTcxNjk4MWUxZGNjNmIyNzIwYWIifX19
+number-seven:
+  name: Getal 7
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmRiNmViMjVkMWZhYWJlMzBjZjQ0NGRjNjMzYjU4MzI0NzVlMzgwOTZiN2UyNDAyYTNlYzQ3NmRkN2I5In19fQ==
+number-eight:
+  name: Getal 8
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTkxOTQ5NzNhM2YxN2JkYTk5NzhlZDYyNzMzODM5OTcyMjI3NzRiNDU0Mzg2YzgzMTljMDRmMWY0Zjc0YzJiNSJ9fX0=
+number-nine:
+  name: Getal 9
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTY3Y2FmNzU5MWIzOGUxMjVhODAxN2Q1OGNmYzY0MzNiZmFmODRjZDQ5OWQ3OTRmNDFkMTBiZmYyZTViODQwIn19fQ==
+number-zero:
+  name: Getal 0
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ==
+wooden-plus:
+  name: Houten plus
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkZDIwYmU5MzUyMDk0OWU2Y2U3ODlkYzRmNDNlZmFlYjI4YzcxN2VlNmJmY2JiZTAyNzgwMTQyZjcxNiJ9fX0=
+minecraft-world:
+  name: Minecraft Wereld
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM4Y2YzZjhlNTRhZmMzYjNmOTFkMjBhNDlmMzI0ZGNhMTQ4NjAwN2ZlNTQ1Mzk5MDU1NTI0YzE3OTQxZjRkYyJ9fX0=
+gold-block:
+  name: Gold block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTRiZjg5M2ZjNmRlZmFkMjE4Zjc4MzZlZmVmYmU2MzZmMWMyY2MxYmI2NTBjODJmY2NkOTlmMmMxZWU2In19fQ==
+diamond-block:
+  name: Diamond block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMTU5N2RjZTRlNDA1MWU4ZDVhNTQzNjQxOTY2YWI1NGZiZjI1YTBlZDYwNDdmMTFlNjE0MGQ4OGJmNDhmIn19fQ==
+emerald-block:
+  name: Emerald block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ1ODY0NzYxNzZhMjU2NDczODE4YTE4NDkxNTdlODQ0YzU2Mzg3MjRiY2Y4MzA5ZjBkOWRmMjdjYTk1OTE2MCJ9fX0=
+open-chest:
+  name: Open chest
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjZhY2ZjNjQzZjYwOGUxNmRlMTkzMzVkZGNhNzFhODI4ZGZiOGRhY2E1NzkzZWI1YmJjYjBjN2QxNTU5MjQ5In19fQ==
+rainbow-chest:
+  name: Regenboog chest
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzdmMWZhNjFjNDQ5ZDFhNDFhM2IyZDAyMDUyMDQ1NWRhMWU1MDU2MDRjMTJhOGNlZTdjNDY4NmNhMWNhOWI5NSJ9fX0=
+wool-chest:
+  name: Wool chest
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTgwNDRkZjdlZWNlOTIyNzE0ZGE0ZmMxMWQ1ZWM4YTVlZDZlNTYyZGU1YzcyODU0ODcwODc3M2E3YWI1NzZlMyJ9fX0=
+locked-chest:
+  name: Locked chest
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFkOTQzZDA2MzM0N2Y5NWFiOWU5ZmE3NTc5MmRhODRlYzY2NWViZDIyYjA1MGJkYmE1MTlmZjdkYTYxZGIifX19
+clock:
+  name: Klok
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmY4OGY5N2YzNjA3MmRlYmVmYWNlMmUzODFlZTcxYjgzM2ViZGVhOGU0MmNmMjliYmUzZGM1MTk5OGViZjJiZSJ9fX0=
+shulker-light-blue:
+  name: Licht blauwe shulker
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZiMTZiMjI0MDJlZTI3YTlhYTE0ZmVkMTA3ODcyYmM1YzRiNTJlMTMzODE1NDZmOGJjMTNkYjQ5OTU1MjkxNiJ9fX0=
+ice-block:
+  name: Ice block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTI2NDQwNzFiNmM3YmJhZTdiNWU0NWQ5ZjgyZjk2ZmZiNWVlOGUxNzdhMjNiODI1YTQ0NjU2MDdmMWM5YyJ9fX0=
+command-block:
+  name: Command Block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJmMjc1MmNkZjhiYjY2NWEzZWNhYjA3YzEyNjFhOGU1OTRkYTc5MTdiY2FmNTYyNjc0N2EwOTcyMTk2MDk5MyJ9fX0=
+message-icon:
+  name: Message Icon
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFlN2JmNDUyMmIwM2RmY2M4NjY1MTMzNjNlYWE5MDQ2ZmRkZmQ0YWE2ZjFmMDg4OWYwM2MxZTYyMTZlMGVhMCJ9fX0=
+color-block:
+  name: Color Block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmMzODU1MGI1ZGFjOWVmYWZhODg5OTQ1YWVjM2JjZDE3OGNiODgwODA2ZWI3ZTcxMmQxYmQ5NmE2MWRmMjNmNiJ9fX0=
+book:
+  name: Book
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFhMGQ3YmNhNThlM2YyZGY0MjA2YjE5ZDg0NWVhYmY4MWIxMWZhZDIxYzAwN2U5ZWE3YzJjNjM5Yzc1MjAxZCJ9fX0=
+dropper:
+  name: Dropper
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjMyNmYwZTczOTM1M2QyZDdjOGU5YWI0ZTkxZTFmYmVjNjA3Y2FkMGZlMTAyOTZhZmQyMWQ2MzNiOWVjZWUifX19
+piston:
+  name: Piston
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTk1ZWFhOTJkMmViOTY5NDI4NGI0ZTk4Y2FkZWNmZDdhODIzMjU2YmFkNWEzOTQ1OThmNjMyNGNmZTdmNzM3YiJ9fX0=
+barrier:
+  name: Barrier
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZkMjQwMDAwMmFkOWZiYmJkMDA2Njk0MWViNWIxYTM4NGFiOWIwZTQ4YTE3OGVlOTZlNGQxMjlhNTIwODY1NCJ9fX0=
+redstone-block:
+  name: Redstone Block
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzc5Njk1MzM4MjZmZTRlZjQ2NTc4OWY4MjMzMTU5OGM4YjhlYzhkYWJhMjk2Yjc1MzA0NGI1MDlmYWJlYWI4NiJ9fX0=
+ghost:
+  name: Geest
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTI5N2NiNTdlNmJmMDhlNmU1MGIwMTc4NDVlM2NmYmZkMTQ2MjU2NWI4NGJlMGQ2NGRiM2IzYmJmNWQ4ZjRlMiJ9fX0=
+sculk-sensor:
+  name: Skulk Sensor
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjdkYWExZmIwNDNkZjBmNDRiYWM5ZTViMzdiZDJiYzUyYjRlNTQ1YzNmYWU5NjNkNjU0ODU2NjA4NDNkZWY0MSJ9fX0=
+ender-pearl:
+  name: Ender Pearl
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWNiN2MyMWNjNDNkYzE3Njc4ZWU2ZjE2NTkxZmZhYWIxZjYzN2MzN2Y0ZjZiYmQ4Y2VhNDk3NDUxZDc2ZGI2ZCJ9fX0=
+anonymous:
+  name: Anonymous
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGUxMmNjOWExODI3OGIwODhiYjMyMmU3OTUwMDM1MDg2YjIyZjI3YjcyMTA2Y2Y0ZjRkZTY2MmFkMWMxNjVhZSJ9fX0=
+silent:
+  name: Silent
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNkNmExMmJmMDk4YTk3NjZkOTdmOTk1YTljZTVkOWI0ODE1MzQyMzQxYTMzNDAwODE5NGRhOWUyZmU3ZGZjNyJ9fX0=
+lifebound:
+  name: LifeBound
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2UxYjdiYjhkMTkxODYyM2YxYWQ4MDRkZmUzNGQwZDJhODg1Y2ZhZjNkYzRmNmFmOTE3YTU3M2ZlODYxYTc2ZiJ9fX0=
+soulbound:
+  name: SoulBound
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDExZDI1YmNkYWJhZmFkNWZkNmUwMTBjNWIxY2Y3YTAwYzljY2E0MGM1YTQ2NzQ3ZjcwNmRjOWNiM2EifX19
+droppable-once:
+  name: Droppable Once
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjVlOTE1MmVmZDg5MmY2MGQ3ZTBkN2U1MzM2OWUwNDc3OWVkMzExMWUyZmIyNzUyYjZmNGMyNmRmNTQwYWVkYyJ9fX0=
+avatar-aang:
+  name: Avatar Aang
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzRmYjlmZWNhNmM4M2Y0YzRiYjk2YzcwMTQ5YjQxNGFjMTYyN2M4MWVhYTM2NTc2YTg5ZWM2NmE0NGE5In19fQ==
+black-fish:
+  name: Black Fish
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTMwN2Y1N2Q4ZTdlZGU0MmI5M2JlMzBjZjBjMDY4MmE4MDk0NTk1NmYzMTVjMjQxZWI0NWY4NjRlZTBlYjYwYSJ9fX0=
+white-fish:
+  name: White Fish
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmUxM2QwNDgwM2Y1NTZmMDdhYzY5ODBjNDM4MWJlYzIzZTgxMjRmOGE0ZTVjY2JkMTFiOGE5NTk4ZDc3MzBmZiJ9fX0=
+avatar-roku:
+  name: Avatar Roku
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODhkNjE0ZmZiYjhlMmQ0NjlmYjAyNjEwZjdhMDdjNjJlY2Q0MWY5ZTFjODJlNDBjYmJmMzZkZTgxYmMwNTAwOSJ9fX0=
+zuko:
+  name: Zuko
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTk2OTBiN2Y4ZWFiYTQxZWQwMTNlMzJmYTVkYTA5ZDhiNjUyMTEyMGQzMzg5ZjI0MDcxMzIzNmRmNmYzNTc4MyJ9fX0=
+fire-lord:
+  name: Fire Lord
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2FjNTcxOTljMzhjNjU3Zjk1NTRmM2JmMWY3ZjZkMjQ2NmQ3ZWM0ZWRjNWEyZmIwZjJjNzk4ODg1MWM1ZGEyOCJ9fX0=
+ty-lee:
+  name: Ty Lee
+  type: manually-added
+  value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2MyODRiNTUxYzczMmMzNWI3ZmJkM2FmYzhmZjlkZTdiNmVjNzllZDI0OTBkNjA5NGJmMjg5ZTI1YzgxMGYwNyJ9fX0=
+

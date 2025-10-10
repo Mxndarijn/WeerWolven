@@ -1,0 +1,19 @@
+gamerules:
+  announceAdvancements: false
+  doDaylightCycle: false
+  doFireTick: false
+  doMobLoot: false
+  doWeatherCycle: false
+  randomTickSpeed: 0
+  spectatorsGenerateChunks: 0
+  spawnRadius: 0
+  doImmediateRespawn: true
+  locatorBar: false
+autosave: false
+keepSpawnInMemory: false
+spawn:
+  x: 536
+  y: 77
+  z: 265
+
+    

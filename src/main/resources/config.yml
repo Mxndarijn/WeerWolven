@@ -1,0 +1,17 @@
+language-file: nl-NL.yml
+# 5 = Debug, 4 = Information, 3 = Warning, 2 = Error, 1 = Fatal
+log-level: 5
+# In minutes
+auto-save-configs-interval: 5
+time-before-queue-is-open-in-hours: 2
+database-connection-string: "jdbc:mysql://localhost:3306/widm"
+database-username: "root"
+database-password: ""
+
+# Nametag settings for TAB placeholders
+nametags:
+  use-luckperms-prefix: true
+  # Fallback prefix used when LuckPerms is disabled/unavailable or no prefix is set for the player
+  fallback-prefix: ""
+  # Suffix appended to nametag (TAB renders this), can be empty
+  default-suffix: ""
