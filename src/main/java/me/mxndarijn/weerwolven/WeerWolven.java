@@ -1,14 +1,14 @@
 package me.mxndarijn.weerwolven;
 
 import me.mxndarijn.weerwolven.commands.PresetsCommand;
+import me.mxndarijn.weerwolven.commands.SpawnCommand;
 import me.mxndarijn.weerwolven.data.*;
-import me.mxndarijn.weerwolven.managers.GameWorldManager;
-import me.mxndarijn.weerwolven.managers.PresetsManager;
-import me.mxndarijn.weerwolven.managers.ScoreBoardManager;
+import me.mxndarijn.weerwolven.managers.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.mxndarijn.mxlib.MxLib;
 import nl.mxndarijn.mxlib.configfiles.ConfigService;
 import nl.mxndarijn.mxlib.configfiles.StandardConfigFile;
+import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
 import nl.mxndarijn.mxlib.logger.PrefixRegistry;
@@ -25,13 +25,15 @@ public final class WeerWolven extends JavaPlugin {
     public void onEnable() {
         Logger.setLogLevel(LogLevel.DEBUG);
         Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage().deserialize("<!i>" + WeerWolvenChatPrefix.DEFAULT.getPrefix() + "Starting Weerwolven..."));
-        MxLib.init(this, "weerwolven");
+        MxLib.init(this, "weerwolven", "<dark_gray>[<gold>WeerWolven");
         setLogLevel();
         PrefixRegistry.registerAll(WeerWolvenPrefix.class);
         ConfigService.getInstance().registerAll(WeerWolvenConfigFiles.class);
         PresetsManager.getInstance();
         ScoreBoardManager.getInstance();
         GameWorldManager.getInstance();
+        ItemManager.getInstance();
+        SpawnManager.getInstance();
 
         registerCommands();
         configFilesSaver();
@@ -45,6 +47,7 @@ public final class WeerWolven extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("presets").setExecutor(new PresetsCommand(WeerWolvenPermissions.COMMAND_PRESETS, true, false));
+        getCommand("spawn").setExecutor(new SpawnCommand(WeerWolvenPermissions.COMMAND_SPAWN, true, false));
     }
 
     @Override

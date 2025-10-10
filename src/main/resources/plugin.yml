@@ -2,10 +2,13 @@ name: WeerWolven
 version: '1.0-SNAPSHOT'
 main: me.mxndarijn.weerwolven.WeerWolven
 api-version: '1.21'
-load: STARTUP
 authors: [ Mxndarijn ]
+depend: [ ProtocolLib, PlaceholderAPI, TAB]
 description: WeerWolven plugin based on the real game.
 commands:
   presets:
     description: Edit presets
     usage: /presets
+  spawn:
+    description: Spawn
+    usage: /spawn

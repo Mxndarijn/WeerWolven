@@ -2,6 +2,7 @@ package me.mxndarijn.weerwolven.data;
 
 import lombok.Getter;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
+import me.mxndarijn.weerwolven.items.preset.PresetConfigureTool;
 import net.md_5.bungee.api.chat.ItemTag;
 import nl.mxndarijn.mxlib.inventory.saver.InventoryManager;
 import nl.mxndarijn.mxlib.item.MxDefaultItemStackBuilder;
@@ -14,6 +15,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public enum Items {
+    PRESET_CONFIGURE_TOOL(
+            MxDefaultItemStackBuilder.create(Material.NETHER_STAR, 1)
+                    .setName("<gray>Preset Configure-Tool")
+                    .addLore(" ")
+                    .addLore("<yellow>Met dit item kan je instellingen in een preset aanpassen.")
+                    .build(),
+            p -> {
+                return true;
+            },
+            false,
+            PresetConfigureTool.class,
+            Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
+    ),
 
     ;
 

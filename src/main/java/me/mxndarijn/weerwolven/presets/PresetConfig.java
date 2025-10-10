@@ -13,13 +13,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class PresetConfig {
     @Getter
-    private final HashMap<Colors, MxLocation> colors;
+    private final List<ColorData> colors;
     @Setter
     private File file;
     @Setter
@@ -59,26 +57,18 @@ public class PresetConfig {
 
         configured = fc.getBoolean(PresetConfigValue.CONFIGURED.getConfigValue());
 
-        colors = new HashMap<>();
+        colors = new ArrayList<>();
         ConfigurationSection colorSection = fc.getConfigurationSection(PresetConfigValue.COLORS.getConfigValue());
         if (colorSection == null) {
             return;
         }
         colorSection.getKeys(false).forEach(key -> {
-            Optional<Colors> color = Colors.getColorByType(key);
-            if (color.isPresent()) {
-                Optional<MxLocation> optionalMxLocation = MxLocation.loadFromConfigurationSection(colorSection.getConfigurationSection(key));
-                if (optionalMxLocation.isPresent()) {
-                    MxLocation mxLocation = optionalMxLocation.get();
-                    colors.put(color.get(), mxLocation);
-                } else {
-                    Logger.logMessage(LogLevel.ERROR, WeerWolvenPrefix.PRESETS_MANAGER, "Could not load spawnpoint for color: " + key + " (" + file.getAbsolutePath() + ")");
-                }
-
+            Optional<ColorData> optionalColorData = ColorData.load(colorSection.getConfigurationSection(key), file);
+            if (optionalColorData.isPresent()) {
+                colors.add(optionalColorData.get());
             } else {
-                Logger.logMessage(LogLevel.ERROR, WeerWolvenPrefix.PRESETS_MANAGER, "Could not load color: " + key + " (" + file.getAbsolutePath() + ")");
+                Logger.logMessage(LogLevel.ERROR, WeerWolvenPrefix.PRESETS_MANAGER, "Could not load color data for preset: " + file.getName());
             }
-
         });
     }
 
@@ -94,8 +84,8 @@ public class PresetConfig {
         fc.set(PresetConfigValue.COLORS.getConfigValue(), null);
 
         ConfigurationSection section = fc.createSection(PresetConfigValue.COLORS.getConfigValue());
-        for (Colors c : colors.keySet()) {
-            colors.get(c).write(section.createSection(c.getType()));
+        for (ColorData c : colors) {
+            c.save(section, file);
         }
 
         try {
@@ -107,4 +97,11 @@ public class PresetConfig {
 
     }
 
+    public boolean containsColor(Colors c) {
+        return colors.stream().anyMatch(colorData -> colorData.getColor().equals(c));
+    }
+
+    public Optional<ColorData> getColor(Colors c) {
+        return colors.stream().filter(colorData -> colorData.getColor().equals(c)).findFirst();
+    }
 }

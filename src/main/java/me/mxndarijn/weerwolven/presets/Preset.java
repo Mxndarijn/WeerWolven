@@ -4,10 +4,7 @@ import lombok.Getter;
 import me.mxndarijn.weerwolven.ChangeScoreboardOnChangeWorld;
 import me.mxndarijn.weerwolven.SaveInventoryChangeWorld;
 import me.mxndarijn.weerwolven.WeerWolven;
-import me.mxndarijn.weerwolven.data.Items;
-import me.mxndarijn.weerwolven.data.ScoreBoard;
-import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
-import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
+import me.mxndarijn.weerwolven.data.*;
 import nl.mxndarijn.mxlib.changeworld.ChangeWorldManager;
 import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
 import nl.mxndarijn.mxlib.inventory.heads.MxHeadManager;
@@ -157,18 +154,6 @@ public class Preset {
         return f.exists();
     }
 
-    public String getStars(int stars) {
-        StringBuilder hostStars = new StringBuilder();
-        for (int i = 1; i <= 5; i++) {
-            if (i <= stars) {
-                hostStars.append("<yellow>\u272B");
-            } else {
-                hostStars.append("<gray>\u272B");
-            }
-        }
-        return hostStars.toString();
-    }
-
     public CompletableFuture<Boolean> loadWorld() {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (this.mxWorld.isEmpty()) {
@@ -192,10 +177,7 @@ public class Preset {
                 scoreboard.setUpdateTimer(20L);
                 ChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new SaveInventoryChangeWorld(getInventoriesFile(), new ArrayList<>(
                         Arrays.asList(
-//                                new Pair<>(Items.PRESET_CONFIGURE_TOOL.getItemStack(), WidmChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WidmLanguageText.PRESET_INFO_CONFIGURE_TOOL)),
-//                                new Pair<>(Items.CHEST_CONFIGURE_TOOL.getItemStack(), WidmChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WidmLanguageText.CHEST_CONFIGURE_TOOL_INFO)),
-//                                new Pair<>(Items.SHULKER_CONFIGURE_TOOL.getItemStack(), WidmChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WidmLanguageText.SHULKER_CONFIGURE_TOOL_INFO)),
-//                                new Pair<>(Items.DOOR_CONFIGURE_TOOL.getItemStack(), WidmChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WidmLanguageText.DOOR_CONFIGURE_TOOL_INFO))
+                                new Pair<>(Items.PRESET_CONFIGURE_TOOL.getItemStack(), WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.PRESET_INFO_CONFIGURE_TOOL))
                         )),
                         (p, w, e) -> {
                             unloadWorld();
@@ -234,5 +216,9 @@ public class Preset {
             config.save();
             MxAtlas.getInstance().unloadMxWorld(this.mxWorld.get(), true);
         });
+    }
+
+    public boolean containsColor(Colors c) {
+        return config.containsColor(c);
     }
 }

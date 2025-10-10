@@ -12,7 +12,8 @@ public enum WeerWolvenPermissions implements PermissionType {
     SPAWN_BLOCK_BREAK("spawn.block.break"),
     SPAWN_DROP_ITEM("spawn.drop-item"),
     SPAWN_PICKUP_ITEM("spawn.pickup-item"),
-    SPAWN_CHANGE_INVENTORY("spawn.change-inventory"),;
+    SPAWN_CHANGE_INVENTORY("spawn.change-inventory"),
+    COMMAND_SPAWN("command.spawn");
 
 
     private final String permission;

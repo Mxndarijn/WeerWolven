@@ -12,7 +12,7 @@ public enum WeerWolvenChatPrefix implements ChatPrefixType {
     private final String name;
 
     WeerWolvenChatPrefix(String prefix) {
-        this.prefix = prefix + "<dark_green> \u00BB <gray>";
+        this.prefix = prefix + "<yellow> \u00BB <gray>";
         this.name = prefix;
     }
 

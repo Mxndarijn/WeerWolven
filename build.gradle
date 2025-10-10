@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
 
     //MxLib
-    implementation 'com.github.Mxndarijn:MxLib:1.0.14'
+    implementation 'com.github.Mxndarijn:MxLib:1.0.19'
 
     // Lombok - enabled for compileOnly with annotation processors
     compileOnly 'org.projectlombok:lombok:1.18.34'
