@@ -13,7 +13,8 @@ public enum WeerWolvenPrefix implements PrefixType {
     LOGGER("<dark_purple>Logger"),
     DATABASEMANAGER("<yellow>Database-Manager"),
     STORAGE_MANAGER("<green>Storage-Manager"),
-    NAMETAG_MANAGER("<green>Nametag-Manager");
+    NAMETAG_MANAGER("<green>Nametag-Manager"),
+    ROLE_SETS_MANAGER("<green>Role-Sets-Manager");
 
     private final String prefix;
     private final String name;

@@ -2,6 +2,7 @@ package me.mxndarijn.weerwolven.managers;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.mxndarijn.weerwolven.WeerWolven;
+import me.mxndarijn.weerwolven.data.Items;
 import me.mxndarijn.weerwolven.data.ScoreBoard;
 import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
 import nl.mxndarijn.mxlib.changeworld.ChangeWorldManager;
@@ -58,8 +59,7 @@ public class SpawnManager implements Listener {
                 });
 
                 p.teleport(Functions.getSpawnLocation());
-                //TODO
-//                p.getInventory().addItem(Items.GAMES_ITEM.getItemStack());
+                p.getInventory().addItem(Items.GAMES_ITEM.getItemStack());
                 MxSupplierScoreBoard sb = scoreboards.get(p.getUniqueId());
                 ScoreBoardManager.getInstance().setPlayerScoreboard(p.getUniqueId(), sb);
 

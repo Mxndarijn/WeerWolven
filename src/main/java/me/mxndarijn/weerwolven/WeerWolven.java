@@ -2,6 +2,7 @@ package me.mxndarijn.weerwolven;
 
 import me.mxndarijn.weerwolven.commands.PresetsCommand;
 import me.mxndarijn.weerwolven.commands.SpawnCommand;
+import me.mxndarijn.weerwolven.commands.RoleSetCommand;
 import me.mxndarijn.weerwolven.data.*;
 import me.mxndarijn.weerwolven.managers.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -34,6 +35,7 @@ public final class WeerWolven extends JavaPlugin {
         GameWorldManager.getInstance();
         ItemManager.getInstance();
         SpawnManager.getInstance();
+        RoleSetManager.getInstance();
 
         registerCommands();
         configFilesSaver();
@@ -48,12 +50,14 @@ public final class WeerWolven extends JavaPlugin {
     private void registerCommands() {
         getCommand("presets").setExecutor(new PresetsCommand(WeerWolvenPermissions.COMMAND_PRESETS, true, false));
         getCommand("spawn").setExecutor(new SpawnCommand(WeerWolvenPermissions.COMMAND_SPAWN, true, false));
+        getCommand("rolesets").setExecutor(new RoleSetCommand(WeerWolvenPermissions.COMMAND_ROLESETS, true, false));
     }
 
     @Override
     public void onDisable() {
         Logger.logMessage(LogLevel.INFORMATION, "Stopping WeerWolven...");
         ConfigService.getInstance().saveAll();
+        GameManager.getInstance().save();
         Logger.logMessage(LogLevel.INFORMATION, "Stopped WeerWolven...");
     }
 

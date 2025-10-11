@@ -12,3 +12,6 @@ commands:
   spawn:
     description: Spawn
     usage: /spawn
+  rolesets:
+    description: Edit role sets
+    usage: /rolesets

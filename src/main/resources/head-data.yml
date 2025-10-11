@@ -313,4 +313,160 @@ ty-lee:
   name: Ty Lee
   type: manually-added
   value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2MyODRiNTUxYzczMmMzNWI3ZmJkM2FmYzhmZjlkZTdiNmVjNzllZDI0OTBkNjA5NGJmMjg5ZTI1YzgxMGYwNyJ9fX0=
+red-lady:
+  name: Red Lady / Rode dame
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM1MWQ3OGNlNDg5MzliYTg5YjllOTFlODk2MjQ2Mjc4NjEwOGUxNTczNzViOWY0MDg2ZjVjNjdkZGE2YzAyOSJ9fX0='
+troublemaker:
+  name: Troublemaker / Herrieschopper
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODEzNGFlMDA0ZDIxMTgxZTljNGIzN2E0ZmVjODMyMTAwODJlYzQwZmY2NmMyZjJhYjI0ZmM2ZDE3ZjJjYzdmZCJ9fX0='
+unbitten-cursed:
+  name: Unbitten Cursed / Vervloekte ongebeten
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjNhNTk2MTlhMjJlNjNlNDc4MWU3ZmM0NDdlYjgzZDIwNmEzYTgzZDkyZThkNzU4MzZmM2RjOWQ5OWQwM2VkMiJ9fX0='
+ghost-seer:
+  name: Ghost Seer / Geestenziener
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWJmYWNlN2RmNDk1MWQwMzdhODA5N2RhYjUyNjExMWRlZTI0ZDI5MmNmM2QzYTNjYWFlY2I2NTg5NzZlODRmOCJ9fX0='
+avenger:
+  name: Avenger / Wreker
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjA2YzMxMjQ5NjM2MzYxZWZkMTVkYWMxNDAyY2IzYzgxNDRhMTc5OGJkMWFmNzI1N2I5NWIxMmI4MjQwMzk5YSJ9fX0='
+baker:
+  name: Baker / Bakker
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzhlMzdhMDU5OTYxZmIxNWE0ZTAyYjk3OGZiYmUxOTI5NWRjZDliNDVhM2MwNWJmY2Q2ZjEyMzhiZDIzIn19fQ=='
+seer:
+  name: Seer / Ziener
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzIzYWJlODM4ZGVlY2YzODk0YmFmYTMyMDdhOThhZGQ0ODAzNmRkMmVlZDRkZDExYmQyMmJmZWUzZmM0Yjk5MyJ9fX0='
+detective:
+  name: Detective / Detective
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU3YTExMzIwOWVmYWQ0ZTgwMWI0YWNiNmRkYzU2NWFmZDBjZDg0ZTMzZGMyNjk0YzFjZjBjNmM5MmJjMDE4YiJ9fX0='
+apprentice:
+  name: Apprentice / Leerling
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDhmNzJkOTA3NTQ1NjliOTA0MzBkMmQ5NGViYmVjOTc4MTYzNzJlMzEzYjZlYmE3NGVmMGY3YmM1NDBhODY1OSJ9fX0='
+aura-seer:
+  name: Aura Seer / Auraziener
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2RmZDBjY2IwNDlhYzFiYjYyY2E0ODc2MzA0ZDJlYzQ4OTYyOGZiY2EyMTE1MWVkZDI3OWIxYjc5MzNhMmMwNiJ9fX0='
+poet:
+  name: Poet / Bedichter
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzkzZGFhZjdlZThlNmZhMTVkOTc1YzU1YzZlYWIxMGExNjQ0YzY2N2ViZTI0NzBhN2RhYTg2NjczMGU0M2VkNyJ9fX0='
+beast-hunter:
+  name: Beast Hunter / Beestenjager
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjk2MWIyMWQ3MjA1OTYyYjUxN2QzNzg3ZmVkNjY5MGZkNWY4YTg1MzYxNGU4NmExYjM3OWMxOTMxNzFlNDQ3ZiJ9fX0='
+junior-werewolf:
+  name: Junior Werewolf / Junior weerwolf
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM2ODAyZjZiNjIzM2EwMjc1OTdhZGQ4YmZjMWRkOGYwMDYyNzBkYjE3ZWJhNDJkNDZhOTk2NGRhNDAwYzkzNCJ9fX0='
+wolf-aura-seer:
+  name: Wolf Aura Seer / Wolvenauraziener
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2U0NjA2YzZkOTczYTk5OWFlYzE2ODdjN2UwNzVmN2QzN2RiODE4NWU4OGI4NDQ1MDdmMTZiM2UyYjNlYjY5MCJ9fX0='
+alpha-werewolf:
+  name: Alpha Werewolf / Alpha weerwolf
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDI3OThjZDA4ZDJiODhlMDlhNGJkNjhlY2E2MzNkN2YzYzMzZGE0NDJiM2M4NzI1MWNkZTlmN2Q4NzM1NiJ9fX0='
+wolf-shaman:
+  name: Wolf Shaman / Wolvensjamaan
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzZkYjk4ODhjNTI3NWU3OTkwZWY3YTA1MmY4MWNiZDM4NDZiM2I5M2Q2ODJiMzY0MmY5ZWMyNGRlODgzNTNiZiJ9fX0='
+bodyguard:
+  name: Bodyguard / Bodyguard
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjE1MzI2N2ViYTNiM2RiNjNmNDcxZjIyN2YyOTkxMjVmYjFkY2FhYTYzZmFlMzgyODA4NWI2ZmUxZDM0MjUxYSJ9fX0='
+shadow-wolf:
+  name: Shadow Wolf / Schaduwwolf
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM2ODAyZjZiNjIzM2EwMjc1OTdhZGQ4YmZjMWRkOGYwMDYyNzBkYjE3ZWJhNDJkNDZhOTk2NGRhNDAwYzkzNCJ9fX0='
+cursed:
+  name: Cursed / Vervloekte
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTEzNzIyOTUzOGQ2MTlkYTcwYjVmZDJlYTA2YTU2MGQ5Y2U1MGIwZTJmOTI0MTNlNmFhNzNkOTlmOWQ3YTg3OCJ9fX0='
+nightmare-wolf:
+  name: Nightmare Wolf / Nachtmerriewolf
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgzYjQ1NWFlZDRkNWE3MzI2MDQzYmU0MzQ0YWE3Y2U2MzgxMTI3OGU2NTQxZGI4ZmE3MmZiYjk1MWIyNDhiMiJ9fX0='
+cupid:
+  name: Cupid / Cupido
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmFkMDZmODNiZWU1NmFiNDM4Y2QxNTc3ZTM3OWNlMmQxZGZkZGEwZmUzZDU3ODkzOWE5OGViNmZlZjkxMWVlNSJ9fX0='
+bomber:
+  name: Bomber / Bommenwerper
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDI0YjZkOTVjODY3MmM4NjRkNzZkYzQxOTI2MjQ4MTZmYmIxMTg1ZTg3Yjc4ZjhmMmJiNjg4YTI0ZTFlIn19fQ=='
+murderers:
+  name: Murderers / Moordenaars
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc5NWEzMjkwNjYzNmNhZmI5ZDhhYWJlMjVkMzE2M2VlMGI5ZjhiNTI1ZTllM2ZhNDU4MTkwMWNiNTM0NWZlMCJ9fX0='
+werewolf:
+  name: Werewolf / Weerwolf
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTViYzY3NmYyM2IyNjc3NzMyZmYyZGFmNDI2ZTNiZGViYzk0YmU1ZTM3ZjMxNzBkMmE0MTM2YTQ5NTJkOWZkYyJ9fX0='
+shooter:
+  name: Shooter / Schutter
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFmZjFmNGQ3YTFhN2VhMjQ1YTdmZDBiMzkzZWFkOGQ4YTA1NjcyNjRmZWYzZDM0NjNmZDAwZTIxZWM4OTZhNyJ9fX0='
+alchemist:
+  name: Alchemist / Alchemist
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTU0ZjhjOTY0NDUxZWI3YmVhMzYwN2JhZDc3MTE2NDdlY2EzYmEwZTNiYjFjYTEwYmQzNjM5NzRiYTlhNGUwMCJ9fX0='
+pyromaniac:
+  name: Pyromaniac / Pyromaan
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDg5ODVmODI0MDVjY2FjOGY1YWUxYjlmNjAzMTQyNTYzYzBlNTFmNGI4NGE4ZTM5NThkNTNiOTkzZWNiMThkMyJ9fX0='
+priest:
+  name: Priest / Priester
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2QyZmNmNzg5N2RlZDk5MjcxNTU1OTU3NTlhOTVjNjBmNDE5YjBhNjAwOTQzMTM0YjgzODc3NjA4MTI3MzFmOCJ9fX0='
+cannibal:
+  name: Cannibal / Kanibaal
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmRmYmZjZDA2NzgwNWVkZTNlZDgwOTFmYzc0OTYwZTU1MzI1YTAwZmRlY2U0ZWMwM2VlNmZhMGY0ZmJhZTI5NCJ9fX0='
+doctor:
+  name: Doctor / Dokter
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmY5OGZjYjY2YzllZDFhMmFkZmNhNWJhYWE3YTU2ZTBjNmZmYzg5ODMzM2EzODI3NjA1ZGM2MTBiZjUzY2E5OCJ9fX0='
+guardian-angel:
+  name: Guardian Angel / Beschermengel
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDQ3MDZmN2QyYWYyYjk3ZjU1YmZiZTdiZjRmODg4ZjA5N2UxMzE3M2Q3MmI2OGYzMTg5NmQ3ZjI2NmQxZjZhZiJ9fX0='
+jailer:
+  name: Jailer / Cipier
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzdmNDc1M2QxYWM1YTk2NTc5ZmU0MTM0ZjM5ZWFmNWU1ODY0NjU0ZDc3NmNmYmQzOWVmNDgyZWNhNDE5ZTNkIn19fQ=='
+hunter:
+  name: Hunter / Jager
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ1NjIyNjFjMDFlZDdkZWVmODg4OTA3MmQ2ZjYyN2ZlNDRlYzQwZTgzYTdhNWRkODg5YzBiNjQ2MDQzNWY3In19fQ=='
+villager:
+  name: Villager / Burger
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDEwNzA0NWU2NDk0NDg1NmY0YTQ3YzAxNjg4MWM2ZWFhNjI0NTNhODMyMmE5MmEwYzZjYzI0NDNlYjlhYmQzNCJ9fX0='
+spy:
+  name: Spy / Spion
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjJlMzdjNjM2ZmZjYzA1ZjUxOGFiOTdiZjcxMTFjNmQzY2E5NWM1MzAwYzUyZTU2MGMzZGMzNTYzNzZlZWJkYiJ9fX0='
+witch:
+  name: Witch / Heks
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViYjM1NGYwNWZkMmZhN2FlMGZlNzZhNmJmYTBhYTE1MjQ3OTAwNzhjYjgxM2U2MjQzOGMyNDU2ZTNlZTllYiJ9fX0='
+jester:
+  name: Jester / Dorpsgek
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTE4YWNiZjRkYWU1ZDk5NGEzZjdlYmY0NTJjN2UwMTRiMzMyNzc5M2RjODIxNmM1MzJiZGY1OTViNzZmYzhiMiJ9fX0='
+medium:
+  name: Medium / Helderziende
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc3YmJiOTAzZWUwN2FlNjZlYTk2YWZlZGVjZjVkZjYwOWI3OTRjNTdmZjY4OGUwOTRiMGUwMDExMDU2NGVhOCJ9fX0='
+serial-killer:
+  name: Serial Killer / Seriemoordenaar
+  type: manually-added
+  value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjE5ZDMzNTg0OTY0ODVkNmUzOWQxZjQxOTk0NmMyNmM4ODU4ODE3OTg5NmU0NjY1MjdiMDJlYmRlMTdlYWEwMiJ9fX0='
 

@@ -3,6 +3,7 @@ package me.mxndarijn.weerwolven.data;
 import lombok.Getter;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.items.preset.PresetConfigureTool;
+import me.mxndarijn.weerwolven.items.spawn.GamesItem;
 import net.md_5.bungee.api.chat.ItemTag;
 import nl.mxndarijn.mxlib.inventory.saver.InventoryManager;
 import nl.mxndarijn.mxlib.item.MxDefaultItemStackBuilder;
@@ -28,7 +29,20 @@ public enum Items {
             PresetConfigureTool.class,
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
     ),
-
+    GAMES_ITEM(
+            MxDefaultItemStackBuilder.create(Material.COMPASS, 1)
+                    .setName("<gray>Game Menu")
+                    .addLore(" ")
+                    .addLore("<yellow>Met dit item kan je games joinen,")
+                    .addLore("<yellow>en games aanmaken als je een host bent.")
+                    .build(),
+            p -> {
+                return p.getWorld().getUID().equals(Functions.getSpawnLocation().getWorld().getUID());
+            },
+            false,
+            GamesItem.class,
+            Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
+    ),
     ;
 
 

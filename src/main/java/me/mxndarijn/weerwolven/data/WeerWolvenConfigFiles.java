@@ -8,8 +8,9 @@ public enum WeerWolvenConfigFiles implements ConfigFileType {
     SCOREBOARD_HOST("scoreboard_host.yml", "scoreboards/scoreboard_host.yml", false),
     SCOREBOARD_PLAYER("scoreboard_player.yml", "scoreboards/scoreboard_player.yml", false),
     SCOREBOARD_SPECTATOR("scoreboard_spectator.yml", "scoreboards/scoreboard_spectator.yml", false),
-    UPCOMING_GAMES("upcoming-games.yml", "upcoming-games.yml", true),
-    SCOREBOARD_SPAWN("scoreboard_spawn.yml", "scoreboards/scoreboard_spawn.yml", false);
+    UPCOMING_GAMES("upcoming-games.yml", "upcoming-games.yml", false),
+    SCOREBOARD_SPAWN("scoreboard_spawn.yml", "scoreboards/scoreboard_spawn.yml", false),
+    ROLESETS("rolesets.yml", "rolesets.yml", false);
     @Getter
     private final String fileName;
 
