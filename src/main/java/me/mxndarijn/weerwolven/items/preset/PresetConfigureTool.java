@@ -9,6 +9,8 @@ import me.mxndarijn.weerwolven.managers.PresetsManager;
 import me.mxndarijn.weerwolven.presets.ColorData;
 import me.mxndarijn.weerwolven.presets.Preset;
 import me.mxndarijn.weerwolven.presets.PresetConfig;
+import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
+import nl.mxndarijn.mxlib.changeworld.MxChangeWorldManager;
 import nl.mxndarijn.mxlib.chatinput.MxChatInputManager;
 import nl.mxndarijn.mxlib.inventory.*;
 import nl.mxndarijn.mxlib.inventory.heads.MxHeadManager;
@@ -38,7 +40,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -69,6 +73,44 @@ public class PresetConfigureTool extends WeerWolvenMxItem {
 
     public PresetConfigureTool(ItemStack is, MxWorldFilter worldFilter, boolean gameItem, Action... actions) {
         super(is, worldFilter, gameItem, actions);
+
+        MxChangeWorldManager.getInstance().addUnspecificWorld(new MxChangeWorld() {
+
+            @Override
+            public void enter(Player player, World world, PlayerChangedWorldEvent playerChangedWorldEvent) {
+
+            }
+
+            @Override
+            public void leave(Player player, World world, PlayerChangedWorldEvent playerChangedWorldEvent) {
+                if (EDIT_STATE.containsKey(player.getUniqueId())) {
+
+                    EditSession s = EDIT_STATE.get(player.getUniqueId());
+                    if (s.preset.getMxWorld().isPresent() && s.preset.getMxWorld().get().getWorldUID() != null) {
+                        if (world.getUID().equals(
+                                s.preset.getMxWorld().get().getWorldUID()
+                        )) {
+                            stopEditing(player.getUniqueId(), true);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void quit(Player player, World world, PlayerQuitEvent playerQuitEvent) {
+                if (EDIT_STATE.containsKey(player.getUniqueId())) {
+
+                    EditSession s = EDIT_STATE.get(player.getUniqueId());
+                    if (s.preset.getMxWorld().isPresent() && s.preset.getMxWorld().get().getWorldUID() != null) {
+                        if (world.getUID().equals(
+                                s.preset.getMxWorld().get().getWorldUID()
+                        )) {
+                            stopEditing(player.getUniqueId(), true);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private String getEditStatusLore(UUID uuid, Preset preset, Colors color, EditMode mode) {

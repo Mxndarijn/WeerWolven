@@ -1,5 +1,6 @@
 package me.mxndarijn.weerwolven.items;
 
+import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.mxitem.MxItem;
 import nl.mxndarijn.mxlib.util.MxWorldFilter;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ public abstract class WeerWolvenMxItem extends MxItem {
     @Override
     protected boolean canExecuteInteract(Player player, ItemStack item, PlayerInteractEvent event) {
         if(isGameItem) {
-//            return GameWorldManager.getInstance().isPlayerInAGame(player.getUniqueId());
+            return GameWorldManager.getInstance().isPlayerInAGame(player.getUniqueId());
         }
         return true;
     }
@@ -27,7 +28,7 @@ public abstract class WeerWolvenMxItem extends MxItem {
     @Override
     protected boolean canExecuteBreak(Player player, ItemStack item, BlockBreakEvent event) {
         if(isGameItem) {
-//            return GameWorldManager.getInstance().isPlayerInAGame(player.getUniqueId());
+            return GameWorldManager.getInstance().isPlayerInAGame(player.getUniqueId());
         }
         return true;
     }

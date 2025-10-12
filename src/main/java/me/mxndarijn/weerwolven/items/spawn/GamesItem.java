@@ -1,13 +1,15 @@
 package me.mxndarijn.weerwolven.items.spawn;
 
-import me.mxndarijn.weerwolven.WeerWolven;
+import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
 import me.mxndarijn.weerwolven.data.WeerWolvenChatPrefix;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
 import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
+import me.mxndarijn.weerwolven.game.Game;
 import me.mxndarijn.weerwolven.game.GameInfo;
 import me.mxndarijn.weerwolven.game.RoleSet;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameManager;
+import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import me.mxndarijn.weerwolven.managers.PresetsManager;
 import me.mxndarijn.weerwolven.managers.RoleSetManager;
 import me.mxndarijn.weerwolven.presets.Preset;
@@ -24,10 +26,9 @@ import nl.mxndarijn.mxlib.item.MxDefaultItemStackBuilder;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
 import nl.mxndarijn.mxlib.item.Pair;
 import nl.mxndarijn.mxlib.language.LanguageManager;
-import nl.mxndarijn.mxlib.permission.PermissionService;
+import nl.mxndarijn.mxlib.permission.MxPermissionService;
 import nl.mxndarijn.mxlib.util.MessageUtil;
 import nl.mxndarijn.mxlib.util.MxWorldFilter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -35,7 +36,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -106,8 +106,15 @@ public class GamesItem extends WeerWolvenMxItem {
 
         switch (upcomingGame.getStatus()) {
             case PLAYING, FREEZE -> {
-                // For now only show spectate hint via item; actual spectate logic not implemented in this project scope.
-                MessageUtil.sendMessageToPlayer(p, WeerWolvenChatPrefix.DEFAULT + "<gray>Spectate is nog niet beschikbaar.");
+                // Spectate
+                Optional<Game> game = GameWorldManager.getInstance().getGameByGameInfo(upcomingGame);
+                game.ifPresent(value -> {
+                    if(click.isShiftClick() && (p.hasPermission(WeerWolvenPermissions.ITEM_GAMES_MANAGE_OTHER_GAMES.getPermission()) || upcomingGame.getHost().equals(p.getUniqueId()))) {
+                        game.get().addHost(p.getUniqueId());
+                    }
+                    value.addSpectator(p.getUniqueId());
+                });
+                return;
             }
             default -> {
                 if (upcomingGame.getStatus().isCanJoinQueue() && !click.isShiftClick()) {
@@ -146,9 +153,16 @@ public class GamesItem extends WeerWolvenMxItem {
                                 .build(),
                         13,
                         (mxInv1, e12) -> {
-                            // In this project, creating a running Game instance is out of scope; just flip status to choosing players
-                            upcomingGame.setStatus(me.mxndarijn.weerwolven.data.UpcomingGameStatus.CHOOSING_PLAYERS);
-                            e12.getWhoClicked().closeInventory();
+                            Optional<Game> gameOptional = Game.createGameFromGameInfo(p.getUniqueId(), upcomingGame);
+                            if (gameOptional.isPresent()) {
+                                gameOptional.get().addHost(p.getUniqueId());
+                                upcomingGame.setStatus(UpcomingGameStatus.CHOOSING_PLAYERS);
+
+                            } else {
+                                MessageUtil.sendMessageToPlayer(p, WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAMES_COULD_NOT_CREATE_GAME));
+                            }
+                            p.closeInventory();
+
                         }
                 )
                 .setItem(MxDefaultItemStackBuilder.create(Material.RED_CONCRETE)
@@ -178,7 +192,7 @@ public class GamesItem extends WeerWolvenMxItem {
         });
 
         // Temporary new RoleSet option
-        if(PermissionService.getInstance().hasPlayerPermission(p,WeerWolvenPermissions.ITEM_GAMES_CREATE_TEMP_ROLESET)) {
+        if(MxPermissionService.getInstance().hasSenderPermission(p,WeerWolvenPermissions.ITEM_GAMES_CREATE_TEMP_ROLESET)) {
             ItemStack temp = MxDefaultItemStackBuilder.create(Material.WRITABLE_BOOK)
                     .setName("<yellow>Tijdelijke RoleSet maken")
                     .addBlankLore()
@@ -264,6 +278,7 @@ public class GamesItem extends WeerWolvenMxItem {
             LocalDateTime dateTime = LocalDateTime.of(date, parsed);
             if (dateTime.isAfter(LocalDateTime.now())) {
                 GameManager.getInstance().addUpcomingGame(p.getUniqueId(), preset, dateTime, roleSet);
+                GameManager.getInstance().save();
                 MessageUtil.sendMessageToPlayer(p, WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAMES_ITEM_UPCOMING_GAME_ADDED));
             } else {
                 MessageUtil.sendMessageToPlayer(p, WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAMES_ITEM_UPCOMING_GAME_TIME_IS_PAST));

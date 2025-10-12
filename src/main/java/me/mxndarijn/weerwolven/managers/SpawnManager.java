@@ -5,7 +5,7 @@ import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.Items;
 import me.mxndarijn.weerwolven.data.ScoreBoard;
 import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
-import nl.mxndarijn.mxlib.changeworld.ChangeWorldManager;
+import nl.mxndarijn.mxlib.changeworld.MxChangeWorldManager;
 import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
 import nl.mxndarijn.mxlib.mxscoreboard.MxSupplierScoreBoard;
 import nl.mxndarijn.mxlib.util.Functions;
@@ -47,7 +47,7 @@ public class SpawnManager implements Listener {
 
         manager.registerEvents(this, plugin);
 
-        ChangeWorldManager.getInstance().addWorld(spawn.getUID(), new MxChangeWorld() {
+        MxChangeWorldManager.getInstance().addWorld(spawn.getUID(), new MxChangeWorld() {
             @Override
             public void enter(Player p, World w, PlayerChangedWorldEvent e) {
                 p.closeInventory();

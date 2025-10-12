@@ -36,6 +36,7 @@ public final class WeerWolven extends JavaPlugin {
         ItemManager.getInstance();
         SpawnManager.getInstance();
         RoleSetManager.getInstance();
+        RoleDefinitionManager.getInstance();
 
         registerCommands();
         configFilesSaver();

@@ -30,7 +30,7 @@ public class GameInfo {
     @Getter
     private String presetId;
     @Getter
-    private String roleSetId;
+    private RoleSet roleSet;
 
     @Getter
     private UUID host;
@@ -49,7 +49,7 @@ public class GameInfo {
         GameInfo game = new GameInfo();
         game.host = host;
         game.presetId = preset.getDirectory().getName();
-        game.roleSetId = roleSet != null ? roleSet.getId() : null;
+        game.roleSet = roleSet;
         game.time = time;
 
         return game;
@@ -59,8 +59,30 @@ public class GameInfo {
         GameInfo game = new GameInfo();
         game.host = UUID.fromString((String) map.get("host"));
         game.presetId = (String) map.get("presetId");
-        game.roleSetId = (String) map.get("roleSetId");
         game.time = LocalDateTime.parse((String) map.get("time"));
+
+        Object rsObj = map.get("roleSet");
+        if (rsObj instanceof java.util.Map<?, ?> rsMap) {
+            try {
+                org.bukkit.configuration.file.YamlConfiguration yml = new org.bukkit.configuration.file.YamlConfiguration();
+                org.bukkit.configuration.ConfigurationSection parent = yml.createSection("roleSet");
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> m = (java.util.Map<String, Object>) rsMap;
+                for (java.util.Map.Entry<String, Object> entry : m.entrySet()) {
+                    if (entry.getValue() instanceof java.util.Map<?, ?> sub) {
+                        parent.createSection(entry.getKey(), (java.util.Map<?, ?>) sub);
+                    }
+                }
+                for (String key : parent.getKeys(false)) {
+                    java.util.Optional<RoleSet> opt = RoleSet.load(parent.getConfigurationSection(key), new java.io.File("upcoming-games.yml"));
+                    if (opt.isPresent()) {
+                        game.roleSet = opt.get();
+                    }
+                    break;
+                }
+            } catch (Exception ignored) {
+            }
+        }
 
         if (game.time.isBefore(LocalDateTime.now()))
             return Optional.empty();
@@ -69,11 +91,7 @@ public class GameInfo {
         if (optionalPreset.isEmpty()) {
             return Optional.empty();
         }
-        if (game.roleSetId != null && !game.roleSetId.isEmpty()) {
-            if (RoleSetManager.getInstance().getById(game.roleSetId).isEmpty()) {
-                return Optional.empty();
-            }
-        }
+        // RoleSet is embedded and optional; if missing or invalid, we still allow the GameInfo to exist.
 
         return Optional.of(game);
     }
@@ -82,7 +100,12 @@ public class GameInfo {
         java.util.Map<String, Object> map = new HashMap<>();
         map.put("host", host.toString());
         map.put("presetId", presetId);
-        if (roleSetId != null) map.put("roleSetId", roleSetId);
+        if (roleSet != null) {
+            org.bukkit.configuration.file.YamlConfiguration yml = new org.bukkit.configuration.file.YamlConfiguration();
+            org.bukkit.configuration.ConfigurationSection parent = yml.createSection("roleSet");
+            roleSet.save(parent, new java.io.File("upcoming-games.yml"));
+            map.put("roleSet", parent.getValues(false));
+        }
         map.put("time", time.toString());
 
         return map;

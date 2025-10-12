@@ -61,13 +61,12 @@ public class GameManager {
     }
 
     public void save() {
-
         List<java.util.Map<String, Object>> list = new ArrayList<>();
         upcomingGameList.forEach(upcomingGame -> {
             list.add(upcomingGame.getDataForSaving());
         });
-
         ConfigService.getInstance().get(config).getCfg().set("upcoming-games", list);
+        ConfigService.getInstance().get(config).save();
     }
 
     public void removeUpcomingGame(GameInfo upcomingGame) {

@@ -3,6 +3,7 @@ lines:
   - " "
   - " <gray>Status:"
   - "  %%game_status%% <gray>(%%game_time%%)"
+  - "  %%phase%%"
   - " "
   - " <gray>Deelnemers: "
   - "  <gray>Levend: %%alive_players%%"

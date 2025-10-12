@@ -8,9 +8,9 @@ import java.lang.reflect.Constructor;
 public class RoleDataFactory {
 
     public static RoleData createRoleData(Roles role, GamePlayer player) {
-        if (role == null) return new EmptyRoleData();
+        if (role == null) return new EmptyRoleData(player);
         Class<? extends RoleData> cls = role.getRoleClass();
-        if (cls == null) return new EmptyRoleData();
+        if (cls == null) return new EmptyRoleData(player);
         try {
             // Try preferred constructors in order
             // 1) (GamePlayer)
@@ -34,6 +34,6 @@ public class RoleDataFactory {
         } catch (Throwable t) {
             // Fall through to return empty
         }
-        return new EmptyRoleData();
+        return new EmptyRoleData(player);
     }
 }

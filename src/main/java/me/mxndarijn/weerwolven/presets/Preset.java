@@ -5,8 +5,8 @@ import me.mxndarijn.weerwolven.ChangeScoreboardOnChangeWorld;
 import me.mxndarijn.weerwolven.SaveInventoryChangeWorld;
 import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.*;
-import nl.mxndarijn.mxlib.changeworld.ChangeWorldManager;
 import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
+import nl.mxndarijn.mxlib.changeworld.MxChangeWorldManager;
 import nl.mxndarijn.mxlib.inventory.heads.MxHeadManager;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
 import nl.mxndarijn.mxlib.item.Pair;
@@ -175,15 +175,15 @@ public class Preset {
                     put("%%configured%%", (config.isConfigured() ? "<green>Ja" : "<red>Nee"));
                 }}));
                 scoreboard.setUpdateTimer(20L);
-                ChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new SaveInventoryChangeWorld(getInventoriesFile(), new ArrayList<>(
+                MxChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new SaveInventoryChangeWorld(getInventoriesFile(), new ArrayList<>(
                         Arrays.asList(
                                 new Pair<>(Items.PRESET_CONFIGURE_TOOL.getItemStack(), WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.PRESET_INFO_CONFIGURE_TOOL))
                         )),
                         (p, w, e) -> {
                             unloadWorld();
                         }));
-                ChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new ChangeScoreboardOnChangeWorld(scoreboard));
-                ChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new MxChangeWorld() {
+                MxChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new ChangeScoreboardOnChangeWorld(scoreboard));
+                MxChangeWorldManager.getInstance().addWorld(this.mxWorld.get().getWorldUID(), new MxChangeWorld() {
                     @Override
                     public void enter(Player p, World w, PlayerChangedWorldEvent e) {
                         p.setGameMode(GameMode.CREATIVE);

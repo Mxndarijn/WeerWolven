@@ -3,6 +3,7 @@ lines:
   - " "
   - " <gray>Status:"
   - "  %%game_status%% <gray>(<gray>%%game_time%%<gray>)"
+  - "  %%phase%%"
   - " <gray>Host:"
   - "   <gray>%%host%%"
   - " "
