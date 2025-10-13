@@ -12,7 +12,8 @@ public enum StatusKey {
     VOTE_BONUS_BREAD(true),
     VOTE_WOLVES_HIDDEN_X2(false),
     CHARGES_WITCH_SAVE(false),
-    CHARGES_WITCH_POISON(false);
+    CHARGES_WITCH_POISON(false),
+    LOVERS(false);
 
 
     public final boolean stackable;

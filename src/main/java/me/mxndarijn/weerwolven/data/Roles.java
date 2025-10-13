@@ -16,6 +16,7 @@ public enum Roles {
     VILLAGER("Burger", Team.CITIZEN, "villager",RolePriority.LOWEST, VillagerRole.class),
     JESTER("Dorpsgek", Team.SOLO, "jester",RolePriority.NORMAL, VillagerRole.class),
     SERIAL_KILLER("Moordenaar", Team.SOLO, "serial-killer",RolePriority.HIGH, VillagerRole.class),
+    CUPIDO("Cupido", Team.CITIZEN, "cupido",RolePriority.LOW, EmptyRoleData.class),
     UNKNOWN("Onbekend", Team.SOLO , "unknown-role", RolePriority.LOWEST, EmptyRoleData.class);
 
     private final String rolName;

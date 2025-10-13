@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game.events;
+package me.mxndarijn.weerwolven.game.events.minecraft;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.mxndarijn.weerwolven.data.Items;

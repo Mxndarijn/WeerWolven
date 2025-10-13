@@ -11,7 +11,7 @@ public interface Status {
     StatusKey key();
 
     /** Mag null zijn als er geen bron is. */
-    UUID source(); // @Nullable
+    UUID source(); // @Nullablethe
 
     /** Gemak: optionele view op de source. */
     default Optional<UUID> sourceOptional() { return Optional.ofNullable(source()); }

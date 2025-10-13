@@ -3,8 +3,11 @@ package me.mxndarijn.weerwolven.game;
 import lombok.Getter;
 import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.*;
+import me.mxndarijn.weerwolven.game.bus.AutoCloseableGroup;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
-import me.mxndarijn.weerwolven.game.events.*;
+import me.mxndarijn.weerwolven.game.events.minecraft.*;
+import me.mxndarijn.weerwolven.game.runtime.KillQueue;
+import me.mxndarijn.weerwolven.game.runtime.LoversChainListener;
 import me.mxndarijn.weerwolven.managers.*;
 import me.mxndarijn.weerwolven.presets.Preset;
 import me.mxndarijn.weerwolven.presets.PresetConfig;
@@ -66,6 +69,9 @@ public class Game {
     private List<GameEvent> events;
     private boolean firstStart = false;
     private BukkitTask updateGameUpdater;
+
+    private final KillQueue killQueue = new KillQueue();
+    private final AutoCloseableGroup busSubs = new AutoCloseableGroup();
 
     public Game(UUID mainHost, GameInfo gameInfo, PresetConfig config, MxWorld mxWorld) {
         this.gameInfo = gameInfo;
@@ -138,6 +144,7 @@ public class Game {
             }
         });
         this.spectatorScoreboard.setUpdateTimer(10);
+        this.registerRuntimeBusListeners();
     }
 
     public static Optional<Game> createGameFromGameInfo(UUID mainHost, GameInfo gameInfo) {
@@ -198,6 +205,19 @@ public class Game {
             }
         });
         return future;
+    }
+
+    private void registerRuntimeBusListeners() {
+        busSubs.close(); // reset if called twice
+        // subscribe all runtime listeners that react to game-bus events:
+        busSubs.add(LoversChainListener.subscribe(this, gameEventBus));
+        // busSubs.add(HunterDeathrattleListener.subscribe(this, gameEventBus));
+        // busSubs.add(WitchSavePoisonListener.subscribe(this, gameEventBus));
+        // etc.
+    }
+
+    private void unregisterRuntimeBusListeners() {
+        busSubs.close();
     }
 
     public boolean removePlayer(UUID playerUUID) {

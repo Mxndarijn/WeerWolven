@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game.events;
+package me.mxndarijn.weerwolven.game.events.minecraft;
 
 import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
