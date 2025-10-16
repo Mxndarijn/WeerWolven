@@ -1,7 +1,6 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.status;
 
-import me.mxndarijn.weerwolven.game.status.IntStatus;
-import me.mxndarijn.weerwolven.game.status.Status;
+import me.mxndarijn.weerwolven.game.core.Game;
 
 import java.util.*;
 import java.util.stream.Collectors;

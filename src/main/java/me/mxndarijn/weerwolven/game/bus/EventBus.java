@@ -1,7 +1,5 @@
 package me.mxndarijn.weerwolven.game.bus;
 
-import org.bukkit.GameEvent;
-
 public interface EventBus {
     <E extends GameBusEvent> AutoCloseable subscribe(
             Class<E> type,

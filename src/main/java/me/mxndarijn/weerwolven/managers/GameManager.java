@@ -3,8 +3,8 @@ package me.mxndarijn.weerwolven.managers;
 
 import lombok.Getter;
 import me.mxndarijn.weerwolven.data.WeerWolvenConfigFiles;
-import me.mxndarijn.weerwolven.game.GameInfo;
-import me.mxndarijn.weerwolven.game.RoleSet;
+import me.mxndarijn.weerwolven.game.core.GameInfo;
+import me.mxndarijn.weerwolven.game.core.RoleSet;
 import me.mxndarijn.weerwolven.presets.Preset;
 import nl.mxndarijn.mxlib.configfiles.ConfigService;
 import org.bukkit.configuration.ConfigurationSection;

@@ -2,7 +2,6 @@ package me.mxndarijn.weerwolven;
 
 import me.mxndarijn.weerwolven.data.WeerWolvenChatPrefix;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
 import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
 import nl.mxndarijn.mxlib.changeworld.WorldReachedZeroPlayersEvent;
 import nl.mxndarijn.mxlib.inventory.saver.InventoryManager;

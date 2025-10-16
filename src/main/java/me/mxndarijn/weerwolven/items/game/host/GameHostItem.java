@@ -2,19 +2,15 @@ package me.mxndarijn.weerwolven.items.game.host;
 
 import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
+import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.chatinput.MxChatInputManager;
-import nl.mxndarijn.mxlib.inventory.MxInventoryIndex;
 import nl.mxndarijn.mxlib.inventory.MxInventoryManager;
 import nl.mxndarijn.mxlib.inventory.MxInventorySlots;
-import nl.mxndarijn.mxlib.inventory.MxItemClicked;
 import nl.mxndarijn.mxlib.inventory.menu.MxDefaultMenuBuilder;
-import nl.mxndarijn.mxlib.inventory.menu.MxListInventoryBuilder;
 import nl.mxndarijn.mxlib.item.MxDefaultItemStackBuilder;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
-import nl.mxndarijn.mxlib.item.Pair;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.util.MessageUtil;
 import nl.mxndarijn.mxlib.util.MxWorldFilter;
@@ -26,9 +22,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 public class GameHostItem extends WeerWolvenMxItem {
@@ -44,10 +38,8 @@ public class GameHostItem extends WeerWolvenMxItem {
         if (optionalGame.isEmpty())
             return;
         Game game = optionalGame.get();
-
         if (!game.getHosts().contains(e.getPlayer().getUniqueId()))
             return;
-
         MxInventoryManager.getInstance().addAndOpenInventory(p, new MxDefaultMenuBuilder("<gray>Host-Tool", MxInventorySlots.THREE_ROWS)
 
                 .setItem(MxDefaultItemStackBuilder.create(Material.COMPARATOR)
@@ -64,7 +56,7 @@ public class GameHostItem extends WeerWolvenMxItem {
                                                     .addBlankLore()
                                                     .addLore("<yellow>Klik hier om de status te veranderen naar: " + UpcomingGameStatus.FREEZE.getStatus())
                                                     .build(),
-                                            10,
+                                            13,
                                             (mxInv1, e2) -> {
                                                 game.setGameStatus(UpcomingGameStatus.FREEZE);
                                                 p.closeInventory();
@@ -76,7 +68,7 @@ public class GameHostItem extends WeerWolvenMxItem {
                                                     .addLore("<gray>Hierbij worden geen statistics aangepast!")
                                                     .addLore("<yellow>Klik hier om de status te veranderen naar: " + UpcomingGameStatus.FINISHED.getStatus())
                                                     .build(),
-                                            14,
+                                            16,
                                             (mxInv1, e2) -> {
                                                 game.setGameStatus(UpcomingGameStatus.FINISHED);
                                                 p.closeInventory();
@@ -87,7 +79,7 @@ public class GameHostItem extends WeerWolvenMxItem {
                                                     .addBlankLore()
                                                     .addLore("<yellow>Klik hier om de status te veranderen naar: " + UpcomingGameStatus.PLAYING.getStatus())
                                                     .build(),
-                                            12,
+                                            10,
                                             (mxInv1, e2) -> {
                                                 game.setGameStatus(UpcomingGameStatus.PLAYING);
                                                 p.closeInventory();

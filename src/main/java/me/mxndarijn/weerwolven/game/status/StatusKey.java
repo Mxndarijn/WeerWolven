@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.status;
 
 public enum StatusKey {
     PROTECTED_TONIGHT(false),

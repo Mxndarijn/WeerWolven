@@ -2,17 +2,18 @@ package me.mxndarijn.weerwolven.game.events.minecraft;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import io.papermc.paper.event.player.PlayerSignCommandPreprocessEvent;
+import me.mxndarijn.weerwolven.data.*;
 import me.mxndarijn.weerwolven.data.Interaction;
-import me.mxndarijn.weerwolven.data.ItemTag;
-import me.mxndarijn.weerwolven.data.Items;
-import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
-import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.managers.GameManager;
+import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.util.Functions;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lectern;
 import org.bukkit.command.BlockCommandSender;
@@ -25,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
@@ -39,7 +41,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
 
 public class GamePlayingEvents extends GameEvent {
 
@@ -116,6 +121,29 @@ public class GamePlayingEvents extends GameEvent {
         if(!Interaction.isAllowedToInteract(type)) {
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void hunger(FoodLevelChangeEvent e) {
+        if (game.getGameInfo().getStatus() != UpcomingGameStatus.PLAYING)
+            return;
+        if (!validateWorld(e.getEntity().getWorld()))
+            return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+        if (game.getGameInfo().getStatus() != UpcomingGameStatus.PLAYING)
+            return;
+        if (!validateWorld(event.getEntity().getWorld()))
+            return;
+        if (!(event.getEntity() instanceof Player victim)) return;
+        if (!(event.getDamager() instanceof Player damager)) return;
+
+        Optional<GamePlayer> optionalGamePlayer = game.getGamePlayerOfPlayer(damager.getUniqueId());
+        if (optionalGamePlayer.isEmpty()) return;
+        event.setCancelled(true);
     }
 
     @EventHandler
@@ -238,36 +266,6 @@ public class GamePlayingEvents extends GameEvent {
                     e.setCancelled(true);
                 }
         }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void chat(AsyncChatEvent e) {
-        Player p = e.getPlayer();
-        if (e.isCancelled())
-            return;
-        if (!validateWorld(p.getWorld()))
-            return;
-        Optional<GamePlayer> optionalGamePlayer = game.getGamePlayerOfPlayer(p.getUniqueId());
-        if (optionalGamePlayer.isEmpty())
-            return;
-        if (!optionalGamePlayer.get().isAlive())
-            return;
-
-        e.setCancelled(true);
-        GamePlayer gp = optionalGamePlayer.get();
-        game.sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_CHAT_PLAYER, Arrays.asList(gp.getColorData().getColor().getDisplayName(), p.getName(), Functions.convertComponentToString(e.message()))));
-    }
-
-    @EventHandler
-    public void chatHost(AsyncChatEvent e) {
-        Player p = e.getPlayer();
-        if (!validateWorld(p.getWorld()))
-            return;
-        if (!game.getHosts().contains(p.getUniqueId()))
-            return;
-
-        e.setCancelled(true);
-        game.sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_CHAT_HOST, Arrays.asList(p.getName(), Functions.convertComponentToString(e.message()))));
     }
 
     @EventHandler

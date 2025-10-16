@@ -1,7 +1,7 @@
 // me.mxndarijn.weerwolven.game.events.ReactionWindowEvent
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
-import me.mxndarijn.weerwolven.game.Phase;
+import me.mxndarijn.weerwolven.game.phase.Phase;
 import me.mxndarijn.weerwolven.game.bus.GameBusEvent;
 
 import java.util.Map;

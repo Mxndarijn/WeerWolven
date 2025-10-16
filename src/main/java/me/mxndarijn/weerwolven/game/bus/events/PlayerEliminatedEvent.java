@@ -1,8 +1,8 @@
 // me.mxndarijn.weerwolven.game.bus.events.PlayerEliminatedEvent
 package me.mxndarijn.weerwolven.game.bus.events;
 
-import me.mxndarijn.weerwolven.game.GamePlayer;
 import me.mxndarijn.weerwolven.game.bus.GameBusEvent;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
 public final class PlayerEliminatedEvent implements GameBusEvent {
     public enum Cause {

@@ -6,7 +6,7 @@ import nl.mxndarijn.mxlib.chatprefix.ChatPrefixType;
 
 @Getter
 public enum WeerWolvenChatPrefix implements ChatPrefixType {
-    DEFAULT("<gold>WeerWolven");
+    DEFAULT("<gold>WeerWolven"), VOTE("<blue>Stemmen");
 
     private final String prefix;
     private final String name;

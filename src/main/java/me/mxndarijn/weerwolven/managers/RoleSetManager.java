@@ -2,7 +2,7 @@ package me.mxndarijn.weerwolven.managers;
 
 import me.mxndarijn.weerwolven.data.WeerWolvenConfigFiles;
 import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
-import me.mxndarijn.weerwolven.game.RoleSet;
+import me.mxndarijn.weerwolven.game.core.RoleSet;
 import nl.mxndarijn.mxlib.configfiles.ConfigService;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;

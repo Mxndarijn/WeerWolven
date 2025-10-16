@@ -1,8 +1,9 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
+
 import java.util.List;
 
 public interface PhaseHooks {

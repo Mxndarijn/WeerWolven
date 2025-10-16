@@ -2,8 +2,8 @@ package me.mxndarijn.weerwolven.game.events.minecraft;
 
 import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.managers.GameManager;
 import me.mxndarijn.weerwolven.managers.ScoreBoardManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;

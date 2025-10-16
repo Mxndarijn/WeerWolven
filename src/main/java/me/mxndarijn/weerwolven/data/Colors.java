@@ -2,27 +2,28 @@ package me.mxndarijn.weerwolven.data;
 
 
 import lombok.Getter;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
 import java.util.Optional;
 
 public enum Colors {
-    LICHTGROEN("light-green", "<green>", "Lime", Material.LIME_SHULKER_BOX, Material.LIME_BED, "light-green-block", "\uE035"),
-    GROEN("green", "<dark_green>", "Groen", Material.GREEN_SHULKER_BOX, Material.GREEN_BED, "green-block", "\uE032"),
-    LICHTBLAUW("light-blue", "<blue>", "Licht-Blauw", Material.LIGHT_BLUE_SHULKER_BOX, Material.LIGHT_BLUE_BED, "light-blue-block", "\uE033"),
-    BLAUW("blue", "<dark_blue>", "Blauw", Material.BLUE_SHULKER_BOX, Material.BLUE_BED, "blue-block", "\uE027"),
-    ZWART("black", "<black>", "Zwart", Material.BLACK_SHULKER_BOX, Material.BLACK_BED, "black-block", "\uE042"),
-    WIT("white", "<white>", "Wit", Material.WHITE_SHULKER_BOX, Material.WHITE_BED, "white-block", "\uE041"),
-    ORANJE("orange", "<gold>", "Oranje", Material.ORANGE_SHULKER_BOX, Material.ORANGE_BED, "orange-block", "\uE037"),
-    ROOD("red", "<red>", "Rood", Material.RED_SHULKER_BOX, Material.RED_BED, "red-block", "\uE039"),
-    MAGENTA("magenta", "<light_purple>", "Magenta", Material.MAGENTA_SHULKER_BOX, Material.MAGENTA_BED, "magenta-block", "\uE036"),
-    ROZE("pink", "<light_purple>", "Roze", Material.PINK_SHULKER_BOX, Material.PINK_BED, "pink-block", "\uE040"),
-    PAARS("purple", "<dark_purple>", "Paars", Material.PURPLE_SHULKER_BOX, Material.PURPLE_BED, "purple-block", "\uE038"),
-    CYAN("cyan", "<dark_aqua>", "Cyan", Material.CYAN_SHULKER_BOX, Material.CYAN_BED, "cyan-block", "\uE0229"),
-    BRUIN("brown", "<gold>", "Bruin", Material.BROWN_SHULKER_BOX, Material.BROWN_BED, "brown-block", "\uE028"),
-    LICHTGRIJS("light-gray", "<gray>", "Licht-Grijs", Material.LIGHT_GRAY_SHULKER_BOX, Material.LIGHT_GRAY_BED, "light-gray-block", "\uE034"),
-    GRIJS("gray", "<dark_gray>", "Grijs", Material.GRAY_SHULKER_BOX, Material.GRAY_BED, "gray-block", "\uE031"),
-    GEEL("yellow", "<yellow>", "Geel", Material.YELLOW_SHULKER_BOX, Material.YELLOW_BED, "yellow-block", "\uE030");
+    LICHTGROEN("light-green", "<green>", "Lime", Material.LIME_SHULKER_BOX, Material.LIME_BED, "light-green-block", "\uE035", DyeColor.LIME),
+    GROEN("green", "<dark_green>", "Groen", Material.GREEN_SHULKER_BOX, Material.GREEN_BED, "green-block", "\uE032", DyeColor.GREEN),
+    LICHTBLAUW("light-blue", "<blue>", "Licht-Blauw", Material.LIGHT_BLUE_SHULKER_BOX, Material.LIGHT_BLUE_BED, "light-blue-block", "\uE033", DyeColor.LIGHT_BLUE),
+    BLAUW("blue", "<dark_blue>", "Blauw", Material.BLUE_SHULKER_BOX, Material.BLUE_BED, "blue-block", "\uE027", DyeColor.BLUE),
+    ZWART("black", "<black>", "Zwart", Material.BLACK_SHULKER_BOX, Material.BLACK_BED, "black-block", "\uE042", DyeColor.BLACK),
+    WIT("white", "<white>", "Wit", Material.WHITE_SHULKER_BOX, Material.WHITE_BED, "white-block", "\uE041", DyeColor.WHITE),
+    ORANJE("orange", "<gold>", "Oranje", Material.ORANGE_SHULKER_BOX, Material.ORANGE_BED, "orange-block", "\uE037", DyeColor.ORANGE),
+    ROOD("red", "<red>", "Rood", Material.RED_SHULKER_BOX, Material.RED_BED, "red-block", "\uE039", DyeColor.RED),
+    MAGENTA("magenta", "<light_purple>", "Magenta", Material.MAGENTA_SHULKER_BOX, Material.MAGENTA_BED, "magenta-block", "\uE036", DyeColor.MAGENTA),
+    ROZE("pink", "<light_purple>", "Roze", Material.PINK_SHULKER_BOX, Material.PINK_BED, "pink-block", "\uE040", DyeColor.PINK),
+    PAARS("purple", "<dark_purple>", "Paars", Material.PURPLE_SHULKER_BOX, Material.PURPLE_BED, "purple-block", "\uE038", DyeColor.PURPLE),
+    CYAN("cyan", "<dark_aqua>", "Cyan", Material.CYAN_SHULKER_BOX, Material.CYAN_BED, "cyan-block", "\uE0229", DyeColor.CYAN),
+    BRUIN("brown", "<gold>", "Bruin", Material.BROWN_SHULKER_BOX, Material.BROWN_BED, "brown-block", "\uE028", DyeColor.BROWN),
+    LICHTGRIJS("light-gray", "<gray>", "Licht-Grijs", Material.LIGHT_GRAY_SHULKER_BOX, Material.LIGHT_GRAY_BED, "light-gray-block", "\uE034", DyeColor.LIGHT_GRAY),
+    GRIJS("gray", "<dark_gray>", "Grijs", Material.GRAY_SHULKER_BOX, Material.GRAY_BED, "gray-block", "\uE031", DyeColor.GRAY),
+    GEEL("yellow", "<yellow>", "Geel", Material.YELLOW_SHULKER_BOX, Material.YELLOW_BED, "yellow-block", "\uE030", DyeColor.YELLOW);
 
     @Getter
     private final String type;
@@ -40,10 +41,13 @@ public enum Colors {
     private final String headKey;
     @Getter
     private final String unicodeIcon;
+    @Getter
+    private final DyeColor dyeColor;
+
 
     private final String PREFIX = "<white>\uE001\uE001\uE001\uE001\uE001";
 
-    Colors(String type, String color, String displayName, Material shulkerBlock, Material bedBlock, String headKey, String unicodeIcon) {
+    Colors(String type, String color, String displayName, Material shulkerBlock, Material bedBlock, String headKey, String unicodeIcon, DyeColor dyeColor) {
         this.type = type;
         this.color = color;
         this.displayName = this.color + displayName;
@@ -52,6 +56,7 @@ public enum Colors {
         this.bedBlock = bedBlock;
         this.headKey = headKey;
         this.unicodeIcon = "  " + PREFIX + unicodeIcon + "  ";
+        this.dyeColor = dyeColor;
     }
 
     public static Optional<Colors> getColorByType(String type) {

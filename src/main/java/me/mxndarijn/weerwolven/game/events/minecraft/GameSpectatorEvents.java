@@ -3,8 +3,8 @@ package me.mxndarijn.weerwolven.game.events.minecraft;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.mxndarijn.weerwolven.data.Items;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.util.MessageUtil;
 import org.bukkit.Bukkit;
@@ -226,24 +226,5 @@ public class GameSpectatorEvents extends GameEvent {
         if (!validateWorld(e.getPlayer().getWorld()))
             return;
         game.getSpectators().remove(e.getPlayer().getUniqueId());
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void chat(AsyncChatEvent e) {
-        if (!validateWorld(e.getPlayer().getWorld()))
-            return;
-        Optional<GamePlayer> oGp = game.getGamePlayerOfPlayer(e.getPlayer().getUniqueId());
-        if(oGp.isEmpty()) {
-            if (!game.getSpectators().contains(e.getPlayer().getUniqueId())) {
-                return;
-            }
-        } else {
-            if(oGp.get().isAlive()) {
-                return;
-            }
-        }
-        e.setCancelled(true);
-        MessageUtil.sendMessageToPlayer(e.getPlayer(), LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_SPECTATOR_TRY_CHAT));
-
     }
 }

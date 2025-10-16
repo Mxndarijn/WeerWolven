@@ -1,13 +1,13 @@
 // me.mxndarijn.weerwolven.game.runtime.LoversChainListener
 package me.mxndarijn.weerwolven.game.runtime;
 
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.StatusKey;
 import me.mxndarijn.weerwolven.game.bus.AutoCloseableGroup;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.bus.Priority;
 import me.mxndarijn.weerwolven.game.bus.events.PlayerEliminatedEvent;
+import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.status.LoverStatus;
+import me.mxndarijn.weerwolven.game.status.StatusKey;
 
 /**
  *

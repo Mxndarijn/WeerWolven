@@ -1,9 +1,9 @@
 package me.mxndarijn.weerwolven.data;
 
 import lombok.Getter;
+import me.mxndarijn.weerwolven.game.core.VillagerRole;
 import me.mxndarijn.weerwolven.game.role.EmptyRoleData;
 import me.mxndarijn.weerwolven.game.role.RoleData;
-import me.mxndarijn.weerwolven.game.VillagerRole;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
 
 @Getter

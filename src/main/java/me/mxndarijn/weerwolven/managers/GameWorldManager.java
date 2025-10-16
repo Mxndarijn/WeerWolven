@@ -2,12 +2,11 @@ package me.mxndarijn.weerwolven.managers;
 
 import me.mxndarijn.weerwolven.data.SpecialDirectories;
 import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GameInfo;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GameInfo;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
 import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,15 +84,13 @@ public class GameWorldManager {
         return false;
     }
 
-
-//    public Optional<Game> getGameByPlayer(UUID uniqueId) {
-//        for (Game game : games) {
-//            if (game.getHosts().contains(uniqueId) || game.getGamePlayerOfPlayer(uniqueId).isPresent() || game.getSpectators().contains(uniqueId)) {
-//                return Optional.of(game);
-//            }
-//        }
-//        return Optional.empty();
-//    }
-
+    public Optional<Game> getGameOfPlayer(UUID uniqueId) {
+        for (Game game : games) {
+            if (game.getHosts().contains(uniqueId) || game.getGamePlayerOfPlayer(uniqueId).isPresent() || game.getSpectators().contains(uniqueId)) {
+                return Optional.of(game);
+            }
+        }
+        return Optional.empty();
+    }
 
 }

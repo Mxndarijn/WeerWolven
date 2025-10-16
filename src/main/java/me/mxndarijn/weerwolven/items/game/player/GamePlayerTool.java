@@ -2,33 +2,26 @@ package me.mxndarijn.weerwolven.items.game.player;
 
 import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.chatinput.MxChatInputManager;
-import nl.mxndarijn.mxlib.inventory.MxInventoryIndex;
 import nl.mxndarijn.mxlib.inventory.MxInventoryManager;
 import nl.mxndarijn.mxlib.inventory.MxInventorySlots;
-import nl.mxndarijn.mxlib.inventory.MxItemClicked;
 import nl.mxndarijn.mxlib.inventory.menu.MxDefaultMenuBuilder;
-import nl.mxndarijn.mxlib.inventory.menu.MxListInventoryBuilder;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
-import nl.mxndarijn.mxlib.item.Pair;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.util.MessageUtil;
 import nl.mxndarijn.mxlib.util.MxWorldFilter;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class GamePlayerTool extends WeerWolvenMxItem {

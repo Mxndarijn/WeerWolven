@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.core;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,7 @@ import me.mxndarijn.weerwolven.data.ScoreBoard;
 import me.mxndarijn.weerwolven.game.role.EmptyRoleData;
 import me.mxndarijn.weerwolven.game.role.RoleData;
 import me.mxndarijn.weerwolven.game.role.RoleDataFactory;
+import me.mxndarijn.weerwolven.game.status.StatusStore;
 import me.mxndarijn.weerwolven.presets.ColorData;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.TitlePart;
@@ -104,5 +105,12 @@ public class GamePlayer {
 
     public Optional<UUID> getOptionalPlayerUUID() {
         return Optional.ofNullable(playerUUID);
+    }
+
+    public String getColoredName() {
+        if( playerUUID == null) {
+            return colorData.getColor().getDisplayName() + " <gray>Onbekend";
+        }
+        return colorData.getColor().getDisplayName() + " <gray>" + Bukkit.getOfflinePlayer(playerUUID).getName();
     }
 }

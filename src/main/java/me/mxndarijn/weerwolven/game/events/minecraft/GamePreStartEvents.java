@@ -1,8 +1,8 @@
 package me.mxndarijn.weerwolven.game.events.minecraft;
 
 import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;

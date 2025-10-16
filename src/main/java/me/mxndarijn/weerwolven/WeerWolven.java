@@ -1,15 +1,17 @@
 package me.mxndarijn.weerwolven;
 
 import me.mxndarijn.weerwolven.commands.PresetsCommand;
-import me.mxndarijn.weerwolven.commands.SpawnCommand;
 import me.mxndarijn.weerwolven.commands.RoleSetCommand;
-import me.mxndarijn.weerwolven.data.*;
+import me.mxndarijn.weerwolven.commands.SpawnCommand;
+import me.mxndarijn.weerwolven.data.WeerWolvenChatPrefix;
+import me.mxndarijn.weerwolven.data.WeerWolvenConfigFiles;
+import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
+import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
 import me.mxndarijn.weerwolven.managers.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.mxndarijn.mxlib.MxLib;
 import nl.mxndarijn.mxlib.configfiles.ConfigService;
 import nl.mxndarijn.mxlib.configfiles.StandardConfigFile;
-import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
 import nl.mxndarijn.mxlib.logger.PrefixRegistry;

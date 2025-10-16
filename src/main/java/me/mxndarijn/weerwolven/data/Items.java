@@ -6,6 +6,7 @@ import me.mxndarijn.weerwolven.items.game.host.GameHostItem;
 import me.mxndarijn.weerwolven.items.game.host.PlayerManagementItem;
 import me.mxndarijn.weerwolven.items.game.host.VanishItem;
 import me.mxndarijn.weerwolven.items.game.player.GamePlayerTool;
+import me.mxndarijn.weerwolven.items.game.player.GameVoteItem;
 import me.mxndarijn.weerwolven.items.game.spectate.LeaveGameItem;
 import me.mxndarijn.weerwolven.items.game.spectate.TeleportItem;
 import me.mxndarijn.weerwolven.items.preset.PresetConfigureTool;
@@ -110,7 +111,7 @@ public enum Items {
     GAME_PLAYER_TOOL(MxDefaultItemStackBuilder.create(Material.NETHER_STAR)
             .setName("<gray>Speler Tool")
             .addBlankLore()
-            .addLore("<yellow>Met dit item kan je stemmen,")
+            .addLore("<yellow>Met dit item kan je")
             .addLore("<yellow>hosts een vraag stellen,")
             .addLore("<yellow>of alle kleuren zien.")
             .addCustomTagString(ItemTag.DROPPABLE.getPersistentDataTag(), false)
@@ -121,6 +122,19 @@ public enum Items {
             },
             true,
             GamePlayerTool.class,
+            Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK),
+    GAME_PLAYER_VOTE_ITEM(MxDefaultItemStackBuilder.create(Material.BOOK)
+            .setName("<gray>Stemboek")
+            .addBlankLore()
+            .addLore("<yellow>Met dit item kan je stemmen.")
+            .addCustomTagString(ItemTag.DROPPABLE.getPersistentDataTag(), false)
+            .addCustomTagString(ItemTag.VANISHABLE.getPersistentDataTag(), false)
+            .build(),
+            p -> {
+                return true;
+            },
+            true,
+            GameVoteItem.class,
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK),
     ;
 

@@ -1,6 +1,6 @@
 package me.mxndarijn.weerwolven.game.events.minecraft;
 
-import me.mxndarijn.weerwolven.game.Game;
+import me.mxndarijn.weerwolven.game.core.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.Listener;

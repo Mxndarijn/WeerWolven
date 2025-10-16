@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
 /**
  * How an action should be resolved by the executor.

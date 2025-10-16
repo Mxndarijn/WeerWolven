@@ -1,7 +1,7 @@
 package me.mxndarijn.weerwolven.game.role;
 
 import me.mxndarijn.weerwolven.data.Roles;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
 import java.lang.reflect.Constructor;
 

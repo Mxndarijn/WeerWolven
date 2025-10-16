@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.core;
 
 import lombok.Getter;
 import me.mxndarijn.weerwolven.WeerWolven;
@@ -6,14 +6,24 @@ import me.mxndarijn.weerwolven.data.*;
 import me.mxndarijn.weerwolven.game.bus.AutoCloseableGroup;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.events.minecraft.*;
+import me.mxndarijn.weerwolven.game.manager.GameChatManager;
+import me.mxndarijn.weerwolven.game.manager.GameHouseManager;
+import me.mxndarijn.weerwolven.game.manager.GameVisibilityManager;
+import me.mxndarijn.weerwolven.game.manager.GameVoteManager;
+import me.mxndarijn.weerwolven.game.phase.Phase;
+import me.mxndarijn.weerwolven.game.phase.PhaseExecutor;
+import me.mxndarijn.weerwolven.game.phase.PhaseHooks;
+import me.mxndarijn.weerwolven.game.phase.DefaultPhaseHooks;
+import me.mxndarijn.weerwolven.game.phase.DayNightCycleManager;
 import me.mxndarijn.weerwolven.game.runtime.KillQueue;
 import me.mxndarijn.weerwolven.game.runtime.LoversChainListener;
 import me.mxndarijn.weerwolven.managers.*;
 import me.mxndarijn.weerwolven.presets.Preset;
 import me.mxndarijn.weerwolven.presets.PresetConfig;
-import nl.mxndarijn.mxlib.changeworld.MxChangeWorldManager;
 import nl.mxndarijn.mxlib.changeworld.MxChangeWorld;
+import nl.mxndarijn.mxlib.changeworld.MxChangeWorldManager;
 import nl.mxndarijn.mxlib.language.LanguageManager;
+import nl.mxndarijn.mxlib.logger.Logger;
 import nl.mxndarijn.mxlib.mxscoreboard.MxSupplierScoreBoard;
 import nl.mxndarijn.mxlib.mxworld.MxAtlas;
 import nl.mxndarijn.mxlib.mxworld.MxWorld;
@@ -25,6 +35,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -66,12 +77,33 @@ public class Game {
     private final List<UUID> spectators;
 
     private long gameTime = 0;
-    private List<GameEvent> events;
+    private List<Listener> events;
     private boolean firstStart = false;
     private BukkitTask updateGameUpdater;
 
     private final KillQueue killQueue = new KillQueue();
     private final AutoCloseableGroup busSubs = new AutoCloseableGroup();
+    
+    // Phase execution system
+    private final PhaseHooks phaseHooks = new DefaultPhaseHooks();
+    private final PhaseExecutor phaseExecutor;
+    private final DayNightCycleManager cycleManager;
+    // Orchestration components
+    private final me.mxndarijn.weerwolven.game.orchestration.IntentCollector intentCollector = new me.mxndarijn.weerwolven.game.orchestration.IntentCollector();
+    private final me.mxndarijn.weerwolven.game.orchestration.OrchestrationConfig orchestrationConfig = new me.mxndarijn.weerwolven.game.orchestration.OrchestrationConfig();
+    private final me.mxndarijn.weerwolven.game.orchestration.DefaultDecisionPolicy defaultPolicy = new me.mxndarijn.weerwolven.game.orchestration.SimpleDefaultDecisionPolicy();
+    private final me.mxndarijn.weerwolven.game.orchestration.AbilityExecutorRegistry abilityExecs = new me.mxndarijn.weerwolven.game.orchestration.AbilityExecutorRegistry();
+    private final me.mxndarijn.weerwolven.game.orchestration.ResolvePolicy resolvePolicy = new me.mxndarijn.weerwolven.game.orchestration.ResolvePolicy();
+    private final java.util.concurrent.Executor mainExecutor = Runnable::run; // direct executor for now
+    private final me.mxndarijn.weerwolven.game.orchestration.OrchestratorFactory orchestratorFactory =
+            new me.mxndarijn.weerwolven.game.orchestration.OrchestratorFactory(
+                    intentCollector, orchestrationConfig, defaultPolicy, abilityExecs, resolvePolicy, mainExecutor);
+    private volatile boolean phaseLoopRunning = false;
+    
+    private GameHouseManager gameHouseManager;
+    private GameChatManager gameChatManager;
+    private GameVoteManager gameVoteManager;
+    private GameVisibilityManager gameVisibilityManager;
 
     public Game(UUID mainHost, GameInfo gameInfo, PresetConfig config, MxWorld mxWorld) {
         this.gameInfo = gameInfo;
@@ -87,6 +119,10 @@ public class Game {
         });
         this.spectators = new ArrayList<>();
         this.respawnLocations = new HashMap<>();
+        
+        // Initialize phase execution system
+        this.cycleManager = new DayNightCycleManager(this, plugin);
+        this.phaseExecutor = new PhaseExecutor(Map.of(), phaseHooks);
 
         this.hostScoreboard = new MxSupplierScoreBoard(plugin, () -> {
             return ScoreBoard.GAME_HOST.getTitle(new HashMap<>() {{
@@ -220,11 +256,11 @@ public class Game {
         busSubs.close();
     }
 
-    public boolean removePlayer(UUID playerUUID) {
+    public void removePlayer(UUID playerUUID) {
         //TODO replace player IDK anymore...
         Optional<GamePlayer> player = getGamePlayerOfPlayer(playerUUID);
         if (player.isEmpty())
-            return false;
+            return;
 
         GamePlayer gamePlayer = player.get();
         gamePlayer.setPlayerUUID(null);
@@ -237,7 +273,6 @@ public class Game {
         sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_PLAYER_LEAVED, new ArrayList<>(Arrays.asList(Bukkit.getOfflinePlayer(playerUUID).getName(), gamePlayer.getColorData().getColor().getDisplayName()))));
         //TODO IDK anymore... Add Scoreboard
 
-        return true;
     }
 
     public void updateGame() {
@@ -267,6 +302,9 @@ public class Game {
             firstStart = true;
             gameInfo.clearQueue();
             setGameRoles();
+            // Register runtime listeners and start the phase loop from Night 1
+            registerRuntimeBusListeners();
+            startPhaseLoop();
         }
         getGameInfo().setStatus(upcomingGameStatus);
         if (upcomingGameStatus == UpcomingGameStatus.FINISHED) {
@@ -353,7 +391,15 @@ public class Game {
     }
 
     public void stopGame() {
+        // stop phase loop if running
+        stopPhaseLoop();
         sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_GAME_STOPPED));
+        
+        // Cleanup phase systems
+        cycleManager.shutdown();
+        unregisterRuntimeBusListeners();
+        busSubs.close();
+        
         getOptionalMxWorld().ifPresent(world -> MxChangeWorldManager.getInstance().removeWorld(world.getWorldUID()));
 
         hosts.forEach(u -> {
@@ -420,12 +466,21 @@ public class Game {
 
     public void registerEvents() {
         unregisterEvents();
+        gameChatManager = new GameChatManager(this);
+        gameHouseManager = new GameHouseManager(this);
+        gameVoteManager = new GameVoteManager(this);
+        gameVisibilityManager = new GameVisibilityManager(this);
+
         events = new ArrayList<>(Arrays.asList(
                 new GamePreStartEvents(this, plugin),
                 new GameFreezeEvents(this, plugin),
                 new GamePlayingEvents(this, plugin),
                 new GameSpectatorEvents(this, plugin),
-                new GameDefaultEvents(this, plugin)
+                new GameDefaultEvents(this, plugin),
+                gameChatManager,
+                gameHouseManager,
+                gameVoteManager,
+                gameVisibilityManager
         ));
     }
 
@@ -489,7 +544,7 @@ public class Game {
     public void sendMessageToPlayers(String message) {
         gamePlayers.forEach(color -> {
             if (color.getOptionalPlayerUUID().isPresent()) {
-                Player p = Bukkit.getPlayer(color.getPlayerUUID());
+                Player p = Bukkit.getPlayer(color.getOptionalPlayerUUID().get());
                 if (p != null) {
                     MessageUtil.sendMessageToPlayer(p, message);
                 }
@@ -560,11 +615,11 @@ public class Game {
         return Optional.empty();
     }
 
-    public boolean addPlayer(UUID playerUUID, GamePlayer gamePlayer) {
+    public void addPlayer(UUID playerUUID, GamePlayer gamePlayer) {
         //TODO Change Inventory
         Player p = Bukkit.getPlayer(playerUUID);
         if (p == null || mxWorld == null)
-            return false;
+            return;
 
         if (gamePlayer.getOptionalPlayerUUID().isPresent()) {
             removePlayer(gamePlayer.getOptionalPlayerUUID().get());
@@ -578,14 +633,133 @@ public class Game {
         p.setFoodLevel(20);
         p.setExp(0);
         p.getInventory().addItem(Items.GAME_PLAYER_TOOL.getItemStack());
+        p.getInventory().addItem(Items.GAME_PLAYER_VOTE_ITEM.getItemStack());
         p.setGameMode(GameMode.SURVIVAL);
         sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_PLAYER_JOINED, new ArrayList<>(Arrays.asList(p.getName(), gamePlayer.getColorData().getColor().getDisplayName()))));
         ScoreBoardManager.getInstance().setPlayerScoreboard(p.getUniqueId(), gamePlayer.getScoreboard());
 
-        return true;
     }
 
     public String getFormattedGameTime() {
         return formatGameTime(gameTime);
+    }
+    
+    /**
+     * Advances the game to the next phase with smooth day/night cycle transition.
+     * This method:
+     * - Updates the phase field
+     * - Increments day number if transitioning from DAWN to DAY
+     * - Triggers smooth time transition via DayNightCycleManager
+     * - Can optionally execute phase actions via PhaseExecutor
+     * 
+     * @return A CompletableFuture that completes when the time transition is finished
+     */
+    public CompletableFuture<Void> advancePhase() {
+        Phase oldPhase = this.phase;
+        Phase newPhase = oldPhase.next();
+        
+        // Update day number if needed
+        if (newPhase.incrementsDayCounterFrom(oldPhase)) {
+            this.dayNumber++;
+        }
+        
+        // Update phase
+        this.phase = newPhase;
+        
+        // Broadcast phase change to players
+        sendMessageToAll("<gray>De fase verandert naar: " + newPhase.getColoredPhase(dayNumber));
+        
+        // Trigger smooth time transition and return the future
+        CompletableFuture<Void> transitionFuture = cycleManager.transitionToPhase(newPhase);
+
+        // TODO: Execute phase actions via PhaseExecutor when handlers are implemented
+        // List<ActionIntent> intents = collectCurrentIntents();
+        // phaseExecutor.execute(this, gameEventBus, newPhase, intents);
+        
+        return transitionFuture;
+    }
+    
+    /**
+     * Directly sets the phase without executing phase logic.
+     * Useful for administrative commands or game setup.
+     * 
+     * @param newPhase The phase to set
+     * @param smoothTransition Whether to use smooth time transition or instant
+     * @return A CompletableFuture that completes when the time transition is finished
+     */
+    public CompletableFuture<Void> setPhase(Phase newPhase, boolean smoothTransition) {
+        Phase oldPhase = this.phase;
+        
+        // Update day number if needed
+        if (newPhase.incrementsDayCounterFrom(oldPhase)) {
+            this.dayNumber++;
+        }
+        
+        this.phase = newPhase;
+        
+        // Broadcast phase change to players
+        sendMessageToAll("<gray>De fase is veranderd naar: " + newPhase.getColoredPhase(dayNumber));
+        
+        // Apply time change and return the appropriate future
+        if (smoothTransition) {
+            return cycleManager.transitionToPhase(newPhase);
+        } else {
+            return cycleManager.setPhaseTimeInstant(newPhase);
+        }
+    }
+
+    // -------- Phase loop orchestration --------
+    /** Starts the automatic phase loop from current phase. If in LOBBY, jumps to NIGHT 1. */
+    public void startPhaseLoop() {
+        if (phaseLoopRunning) return;
+        phaseLoopRunning = true;
+        if (this.phase == Phase.LOBBY) {
+            this.dayNumber = 1; // Night 1
+            setPhase(Phase.NIGHT, true).thenRun(() ->
+                    Bukkit.getScheduler().runTask(plugin, this::runCurrentPhase)
+            );
+        } else if (this.phase != Phase.END) {
+            // Ensure world time matches current phase, then run
+            cycleManager.transitionToPhase(this.phase).thenRun(() ->
+                    Bukkit.getScheduler().runTask(plugin, this::runCurrentPhase)
+            );
+        }
+    }
+
+    /** Stops the automatic phase loop; current orchestrator may finish but no further phases will run. */
+    public void stopPhaseLoop() { this.phaseLoopRunning = false; }
+
+    /** Executes the orchestrator for the current phase, resolves intents, then advances and recurs. */
+    private void runCurrentPhase() {
+        Logger.logMessage("Running phase: " + this.phase + "");
+        if (!phaseLoopRunning) return;
+        if (this.phase == Phase.LOBBY || this.phase == Phase.END) return;
+
+        var orchestrator = orchestratorFactory.create(this, this.phase);
+        if (orchestrator == null) { // No orchestration for this phase; just advance
+            afterPhaseCollection();
+            return;
+        }
+
+        orchestrator.runCollection(() -> {
+            var intents = intentCollector.drain();
+            // Execute collected intents for this phase
+            phaseExecutor.execute(this, gameEventBus, intents);
+            afterPhaseCollection();
+        });
+    }
+
+    /** After execution, advance phase (smooth transition) then continue if still running. */
+    private void afterPhaseCollection() {
+        Logger.logMessage("After phase collection: " + this.phase + "");
+        if (!phaseLoopRunning) return;
+        advancePhase().thenRun(() -> {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                Logger.logMessage("After phase advance: " + this.phase + "");
+                if (phaseLoopRunning && this.phase != Phase.END) {
+                    runCurrentPhase();
+                }
+            });
+        });
     }
 }

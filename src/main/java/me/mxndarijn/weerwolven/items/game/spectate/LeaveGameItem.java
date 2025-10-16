@@ -1,7 +1,7 @@
 package me.mxndarijn.weerwolven.items.game.spectate;
 
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
+import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.language.LanguageManager;

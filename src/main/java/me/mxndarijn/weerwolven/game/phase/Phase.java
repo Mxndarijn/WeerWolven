@@ -1,15 +1,16 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
 import lombok.Getter;
 
 @Getter
 public enum Phase {
-    LOBBY("Samenkomst", false, "<blue>",   0),
-    NIGHT("Nacht",       true,  "<blue>", 13000),
-    DAWN("Zonsopkomst",  false, "<blue>", 23000),
-    DAY("Overdag",       false, "<blue>",     0),
-    DUSK("Zonsondergang",false, "<blue>", 12000),
-    END("Slot",          false, "<blue>",     0);
+    LOBBY("Samenkomst", false, "<blue>", 0),
+    NIGHT("Nacht", true, "<blue>", 13000),
+    DAWN("Zonsopkomst", false, "<blue>", 23000),
+    DAY("Overdag", true, "<blue>", 6000),
+    DUSK("Zonsondergang", false, "<blue>", 12000),
+    END("Slot", false, "<blue>", 0);
+
 
     private final String displayName;
     private final boolean shouldMentionDayNumber;

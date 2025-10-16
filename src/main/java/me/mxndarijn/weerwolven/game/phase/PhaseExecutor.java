@@ -1,9 +1,11 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
 import me.mxndarijn.weerwolven.data.ActionKind;
 import me.mxndarijn.weerwolven.data.Timing;
-import me.mxndarijn.weerwolven.game.*;
+import me.mxndarijn.weerwolven.game.action.ActionHandler;
+import me.mxndarijn.weerwolven.game.action.ActionIntent;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
+import me.mxndarijn.weerwolven.game.core.Game;
 
 import java.util.*;
 import java.util.stream.Collectors;

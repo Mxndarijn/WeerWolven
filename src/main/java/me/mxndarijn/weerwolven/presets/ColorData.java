@@ -8,8 +8,6 @@ import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
 import nl.mxndarijn.mxlib.mxworld.MxLocation;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;

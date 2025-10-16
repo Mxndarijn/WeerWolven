@@ -1,8 +1,10 @@
 // me.mxndarijn.weerwolven.game.DefaultPhaseHooks
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.phase;
 
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.bus.events.AttackIncomingEvent;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.runtime.KillQueue;
 import me.mxndarijn.weerwolven.game.runtime.PendingKill;
 

@@ -6,14 +6,16 @@ import me.mxndarijn.weerwolven.data.Colors;
 import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
-import nl.mxndarijn.mxlib.mxworld.MxLocation;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class PresetConfig {
     @Getter

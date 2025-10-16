@@ -1,8 +1,9 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.action;
 
 import me.mxndarijn.weerwolven.data.ActionKind;
-import me.mxndarijn.weerwolven.game.Game;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.phase.ResolveMode;
 
 import java.util.List;
 

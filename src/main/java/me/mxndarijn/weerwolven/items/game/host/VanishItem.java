@@ -2,7 +2,7 @@ package me.mxndarijn.weerwolven.items.game.host;
 
 import me.mxndarijn.weerwolven.data.WeerWolvenChatPrefix;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
-import me.mxndarijn.weerwolven.game.Game;
+import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import me.mxndarijn.weerwolven.managers.VanishManager;

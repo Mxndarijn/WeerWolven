@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.core;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,6 @@ import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
 import me.mxndarijn.weerwolven.data.WeerWolvenPermissions;
 import me.mxndarijn.weerwolven.managers.GameManager;
 import me.mxndarijn.weerwolven.managers.PresetsManager;
-import me.mxndarijn.weerwolven.managers.RoleSetManager;
 import me.mxndarijn.weerwolven.presets.Preset;
 import nl.mxndarijn.mxlib.configfiles.ConfigService;
 import nl.mxndarijn.mxlib.configfiles.StandardConfigFile;

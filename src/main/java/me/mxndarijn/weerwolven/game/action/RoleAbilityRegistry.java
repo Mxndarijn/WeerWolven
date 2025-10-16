@@ -1,9 +1,10 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.action;
 
 
 import me.mxndarijn.weerwolven.data.ActionKind;
 import me.mxndarijn.weerwolven.data.Roles;
 import me.mxndarijn.weerwolven.data.Timing;
+import me.mxndarijn.weerwolven.game.phase.ResolveMode;
 
 import java.util.EnumMap;
 import java.util.List;

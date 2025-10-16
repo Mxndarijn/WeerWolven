@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.core;
 
 import lombok.Getter;
 import lombok.Setter;

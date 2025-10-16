@@ -1,10 +1,10 @@
 // me.mxndarijn.weerwolven.game.combat.KillQueue
 package me.mxndarijn.weerwolven.game.runtime;
 
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.GamePlayer;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.bus.events.PlayerEliminatedEvent;
+import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
 import java.util.ArrayList;
 import java.util.List;

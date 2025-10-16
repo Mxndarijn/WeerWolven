@@ -1,8 +1,8 @@
-package me.mxndarijn.weerwolven.game;
+package me.mxndarijn.weerwolven.game.action;
 
 import me.mxndarijn.weerwolven.data.ActionKind;
 import me.mxndarijn.weerwolven.data.Timing;
-import me.mxndarijn.weerwolven.game.GamePlayer;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
 import java.util.Map;
 

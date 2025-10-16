@@ -137,7 +137,7 @@ public enum Interaction {
 
     public static boolean isAllowedToInteract(Material type) {
         for (Interaction interaction : values()) {
-            if (interaction.getMat() == type) return true;
+            if (interaction.getMat() == type) return interaction.defaultValue;
         }
         return false;
     }

@@ -1,8 +1,7 @@
 package me.mxndarijn.weerwolven.game.status;
 
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.Phase;
-import me.mxndarijn.weerwolven.game.StatusKey;
+
+import me.mxndarijn.weerwolven.game.core.Game;
 
 import java.util.Optional;
 import java.util.UUID;

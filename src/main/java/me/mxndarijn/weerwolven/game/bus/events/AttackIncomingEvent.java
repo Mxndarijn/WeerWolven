@@ -1,9 +1,9 @@
 // me.mxndarijn.weerwolven.game.bus.events.AttackIncomingEvent
 package me.mxndarijn.weerwolven.game.bus.events;
 
-import me.mxndarijn.weerwolven.game.GamePlayer;
 import me.mxndarijn.weerwolven.game.bus.Cancellable;
 import me.mxndarijn.weerwolven.game.bus.GameBusEvent;
+import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
 /**
  * Fired for each proposed kill BEFORE it's committed.

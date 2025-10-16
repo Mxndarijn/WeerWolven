@@ -1,10 +1,9 @@
 // me.mxndarijn.weerwolven.game.status.LoverStatus
 package me.mxndarijn.weerwolven.game.status;
 
-import me.mxndarijn.weerwolven.game.Game;
-import me.mxndarijn.weerwolven.game.StatusKey;
 
-import java.util.Optional;
+import me.mxndarijn.weerwolven.game.core.Game;
+
 import java.util.UUID;
 
 /** Persistent “bond” with partner. */
