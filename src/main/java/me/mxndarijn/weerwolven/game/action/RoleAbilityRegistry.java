@@ -59,7 +59,7 @@ public final class RoleAbilityRegistry {
         MAP.put(Roles.SPY, List.of(
                 new AbilityDef(ActionKind.SPY_WATCH, Timing.NIGHT, ResolveMode.SERIAL, INIT_SPY_WATCH, false)
         ));
-        MAP.put(Roles.CUPIDO, List.of(
+        MAP.put(Roles.CUPID, List.of(
                 new AbilityDef(ActionKind.COUPLE, Timing.NIGHT, ResolveMode.SERIAL, INIT_CUPIDO, /*oncePerGame*/ true)
         ));
 

@@ -90,7 +90,7 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                 .addLore("<gray>Maak een lege RoleSet aan.")
                 .addLore("<gray>Je kunt daarna de rollen instellen en opslaan.")
                 .build();
-        builder.setItem(create, 53, (inv, e) -> {
+        builder.setItem(create, 52, (inv, e) -> {
             String newName = generateUniqueName();
             RoleSet rs = RoleSet.createEmpty(newName);
             // Do not register yet; add to manager upon saving
@@ -120,40 +120,53 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
     }
 
     private void renderEditor(Player p, RoleSet roleSet, String title) {
-        MxDefaultMenuBuilder builder = MxDefaultMenuBuilder.create(title, MxInventorySlots.SIX_ROWS);
+        // Use a list inventory for roles editing
+        ArrayList<nl.mxndarijn.mxlib.item.Pair<ItemStack, MxItemClicked>> list = new ArrayList<>();
 
-        // Place each role head in grid using a common centered layout, remove villager will be auto filled.
-        Roles[] roles = Arrays.stream(Roles.values()).filter(roles1 -> {
-            return !roles1.getRolName().equalsIgnoreCase("villager");
-        }).toArray(Roles[]::new);
-        int[] slots = new int[]{10,11,12,13,14,15,16,
-                19,20,21,22,23,24,25,
-                28,29,30,31,32,33,34,
-                37,38,39,40,41,42,43};
-        for (int i = 0; i < roles.length && i < slots.length; i++) {
-            Roles r = roles[i];
-            int count = roleSet.getRoleSet().getOrDefault(r, 0);
-            ItemStack head = r.getHead()
-                    .setName(r.getRoleWithColor())
-                    .addBlankLore()
-                    .addLore("<gray>In deze set: <yellow>" + count)
-                    .addBlankLore()
-                    .addLore("<green>Linkerklik: +1")
-                    .addLore("<red>Shift+klik: -1")
-                    .build();
-            int slot = slots[i];
-            builder.setItem(head, slot, (inv, e) -> {
-                boolean shift = e.isShiftClick();
-                int cur = roleSet.getRoleSet().getOrDefault(r, 0);
-                if (shift) {
-                    cur = Math.max(0, cur - 1);
-                } else {
-                    cur = cur + 1;
-                }
-                roleSet.getRoleSet().put(r, cur);
-                renderEditor((Player) e.getWhoClicked(), roleSet, title);
-            });
-        }
+        // Build role items (exclude Villager; that will auto-fill)
+        Arrays.stream(Roles.values())
+                .filter(r -> !r.getRolName().equalsIgnoreCase("villager"))
+                .forEach(r -> {
+                    if(r == Roles.VILLAGER || r == Roles.UNKNOWN)
+                        return;
+                    int count = roleSet.getRoleSet().getOrDefault(r, 0);
+                    Integer max = r.getMaxPerRoleSet();
+                    String maxText = max == null ? "Onbeperkt" : String.valueOf(max);
+
+                    MxSkullItemStackBuilder skull = r.getHead()
+                            .setName(r.getRoleWithColor())
+                            .addBlankLore()
+                            .addLore("<gray>In deze set: <yellow>" + count)
+                            .addLore("<gray>Max: <yellow>" + maxText)
+                            .addBlankLore()
+                            .addLore("<green>Linkerklik: +1")
+                            .addLore("<red>Shift+klik: -1");
+
+                    ItemStack item = skull.build();
+                    MxItemClicked onClick = (inv, e) -> {
+                        boolean shift = e.isShiftClick();
+                        int cur = roleSet.getRoleSet().getOrDefault(r, 0);
+                        if (shift) {
+                            cur = Math.max(0, cur - 1);
+                        } else {
+                            // Enforce max when present
+                            if (max != null && cur >= max) {
+                                MessageUtil.sendMessageToPlayer(e.getWhoClicked(), WeerWolvenChatPrefix.DEFAULT + "<red>Max aantal voor deze rol is bereikt (" + max + ")");
+                                return;
+                            }
+                            cur = cur + 1;
+                        }
+                        roleSet.getRoleSet().put(r, cur);
+                        // Re-open to refresh
+                        renderEditor((Player) e.getWhoClicked(), roleSet, title);
+                    };
+
+                    list.add(new nl.mxndarijn.mxlib.item.Pair<>(item, onClick));
+                });
+
+        MxListInventoryBuilder builder = MxListInventoryBuilder.create(title, MxInventorySlots.SIX_ROWS)
+                .setAvailableSlots(MxInventoryIndex.ROW_ONE_TO_FIVE)
+                .setListItems(list);
 
         // Change Name button
         ItemStack changeName = MxDefaultItemStackBuilder.create(Material.NAME_TAG)
@@ -163,7 +176,7 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                 .addBlankLore()
                 .addLore("<yellow>Klik en typ vervolgens de nieuwe naam in de chat.")
                 .build();
-        builder.setItem(changeName, 47, (inv, e) -> {
+        builder.setItem(changeName, 48, (inv, e) -> {
             Player pl = (Player) e.getWhoClicked();
             MessageUtil.sendMessageToPlayer(pl, WeerWolvenChatPrefix.DEFAULT + LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.ROLE_SETS_ENTER_NEW_NAME));
             pl.closeInventory();
@@ -186,8 +199,8 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                 .addBlankLore()
                 .addLore("<yellow>Klik hier om de skull van de RoleSet te veranderen.")
                 .build();
-        builder.setItem(changeSkull, 46, (mainInv, clickMain) -> {
-            ArrayList<nl.mxndarijn.mxlib.item.Pair<ItemStack, MxItemClicked>> list = new ArrayList<>();
+        builder.setItem(changeSkull, 47, (mainInv, clickMain) -> {
+            ArrayList<nl.mxndarijn.mxlib.item.Pair<ItemStack, MxItemClicked>> skullList = new ArrayList<>();
             MxItemClicked clicked = (mxInv, e1) -> {
                 ItemStack is = e1.getCurrentItem();
                 if (is == null) return;
@@ -219,14 +232,14 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                             .addBlankLore()
                             .addLore("<yellow>Klik om de skull te selecteren.")
                             .addCustomTagString("skull_key", mxHeadSection.getKey());
-                    list.add(new nl.mxndarijn.mxlib.item.Pair<>(b.build(), clicked));
+                    skullList.add(new nl.mxndarijn.mxlib.item.Pair<>(b.build(), clicked));
                 });
             });
 
             MxInventoryManager.getInstance().addAndOpenInventory((Player) clickMain.getWhoClicked(),
                     MxListInventoryBuilder.create("<gray>Kies skull", MxInventorySlots.SIX_ROWS)
                             .setAvailableSlots(MxInventoryIndex.ROW_ONE_TO_FIVE)
-                            .addListItems(list)
+                            .addListItems(skullList)
                             .setItem(MxDefaultItemStackBuilder.create(Material.PAPER)
                                     .setName("<gray>Info")
                                     .addBlankLore()
@@ -240,7 +253,7 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                 .setName("<green>Opslaan")
                 .addLore("<gray>Sla de wijzigingen.")
                 .build();
-        builder.setItem(save, 53, (inv, e) -> {
+        builder.setItem(save, 52, (inv, e) -> {
             // commit: update original RoleSet with working values
             RoleSetManager.getInstance().addOrUpdate(roleSet);
             RoleSetManager.getInstance().saveAll();
@@ -268,7 +281,7 @@ public class RoleSetCommand extends WeerWolvenMxCommand {
                 .setName("<red>Annuleren")
                 .addLore("<gray>Annuleer en sluit zonder op te slaan")
                 .build();
-        builder.setItem(cancel, 45, (inv, e) -> e.getWhoClicked().closeInventory());
+        builder.setItem(cancel, 46, (inv, e) -> e.getWhoClicked().closeInventory());
 
         // Current set icon updated with new counts
         ItemStack icon = roleSet.getSkullItemStackBuilder().build();

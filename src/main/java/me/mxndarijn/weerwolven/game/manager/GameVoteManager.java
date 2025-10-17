@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 
 /**
  * GameVoteManager
@@ -31,6 +31,16 @@ public class GameVoteManager extends GameManager {
 
     public GameVoteManager(Game game) {
         super(game);
+    }
+
+    public int getEligibleVotes() {
+        if(state == null) return 0;
+        return state.eligibleCount();
+    }
+
+    public int getVotesCast() {
+        if(state == null) return 0;
+        return state.votesCast();
     }
 
     public enum Type { NOMINATION, INSTANT }
@@ -87,12 +97,13 @@ public class GameVoteManager extends GameManager {
                                                  boolean allowSelfVote,
                                                  String nominationTitleKey,
                                                  String yesNoTitleKey,
+                                                 ToIntFunction<GamePlayer> weightProvider,
                                                  Consumer<Finish> onFinish) {
 
         if (maxRounds < 1) maxRounds = 1;
         State s = new State(Type.NOMINATION, new HashSet<>(eligibleVoters), new ArrayList<>(votablePlayers),
                 publicVotes, allowSelfVote, canSkip, maxRounds,
-                nominationTitleKey, yesNoTitleKey, onFinish);
+                nominationTitleKey, yesNoTitleKey, weightProvider, onFinish);
         this.state = s;
 
         notifyPlayersCanVote(s.eligibleVoters, nominationTitleKey);
@@ -102,13 +113,14 @@ public class GameVoteManager extends GameManager {
      * Start an INSTANT vote.
      */
     public synchronized void startInstantVote(Set<GamePlayer> eligibleVoters,
-                                              List<GamePlayer> votablePlayers,
-                                              boolean publicVotes,
-                                              boolean allowSelfVote,
-                                              String titleKey,
-                                              Consumer<Finish> onFinish) {
+                                             List<GamePlayer> votablePlayers,
+                                             boolean publicVotes,
+                                             boolean allowSelfVote,
+                                             String titleKey,
+                                             ToIntFunction<GamePlayer> weightProvider,
+                                             Consumer<Finish> onFinish) {
 
-        startInstantVote(eligibleVoters, votablePlayers, publicVotes, allowSelfVote, true, titleKey, onFinish);
+        startInstantVote(eligibleVoters, votablePlayers, publicVotes, allowSelfVote, true, titleKey, weightProvider, onFinish);
     }
 
     public synchronized void startInstantVote(Set<GamePlayer> eligibleVoters,
@@ -117,10 +129,11 @@ public class GameVoteManager extends GameManager {
                                               boolean allowSelfVote,
                                               boolean canSkip,
                                               String titleKey,
+                                              ToIntFunction<GamePlayer> weightProvider,
                                               Consumer<Finish> onFinish) {
 
         State s = new State(Type.INSTANT, new HashSet<>(eligibleVoters), new ArrayList<>(votablePlayers),
-                publicVotes, allowSelfVote, canSkip, 1, titleKey, titleKey, onFinish);
+                publicVotes, allowSelfVote, canSkip, 1, titleKey, titleKey, weightProvider, onFinish);
         this.state = s;
 
         notifyPlayersCanVote(s.eligibleVoters, titleKey);
@@ -219,6 +232,12 @@ public class GameVoteManager extends GameManager {
         // callbacks
         final Consumer<Finish> onFinish;
 
+        // weights
+        final ToIntFunction<GamePlayer> weightProvider;
+        // stored at submission time
+        final Map<GamePlayer, Integer> nominationWeights = new HashMap<>(); // voter -> weight snapshot at nomination submit
+        final Map<GamePlayer, Integer> yesNoWeights = new HashMap<>();      // voter -> weight snapshot at yes/no submit
+
         // tallies (per step)
         final Map<GamePlayer, GamePlayer> nominations = new HashMap<>(); // voter -> nominee (null means skip)
         final Map<GamePlayer, Boolean> yesNo = new HashMap<>();          // voter -> yes/no (cannot be skipped)
@@ -235,6 +254,7 @@ public class GameVoteManager extends GameManager {
               int maxRounds,
               String nominationTitleKey,
               String yesNoTitleKey,
+              ToIntFunction<GamePlayer> weightProvider,
               Consumer<Finish> onFinish) {
             this.type = type;
             this.eligibleVoters = eligibleVoters;
@@ -246,17 +266,18 @@ public class GameVoteManager extends GameManager {
             this.nominationTitleKey = nominationTitleKey;
             this.yesNoTitleKey = yesNoTitleKey;
             this.onFinish = onFinish;
+            this.weightProvider = weightProvider;
 
             this.round = 1;
         }
 
-        int eligibleCount() {
+        public int eligibleCount() {
             int c = 0;
             for (GamePlayer gp : eligibleVoters) if (gp.getOptionalPlayerUUID().isPresent()) c++;
             return c;
         }
 
-        int votesCast() {
+        public int votesCast() {
             return inYesNoPhase ? yesNo.size() : nominations.size();
         }
 
@@ -272,6 +293,8 @@ public class GameVoteManager extends GameManager {
 
             if (target == null) {
                 if (!canSkip) return false;
+                // Snapshot weight at submission time (0 for skip)
+                nominationWeights.put(voter, 0);
                 nominations.put(voter, null);
                 return true;
             }
@@ -280,6 +303,9 @@ public class GameVoteManager extends GameManager {
             if (!allowSelfVote && voter.equals(target)) return false;
             if (triedNominees.contains(target)) return false; // cannot re-nominate failed nominee in later rounds
 
+            // Snapshot weight at submission time
+            int w = Math.max(0, weightProvider.applyAsInt(voter));
+            nominationWeights.put(voter, w);
             nominations.put(voter, target);
             return true;
         }
@@ -290,6 +316,9 @@ public class GameVoteManager extends GameManager {
             if (yesNo.containsKey(voter)) return false;
 
             if (yesValue == null) return false; // YES/NO cannot be skipped
+            // Snapshot weight at submission time for YES/NO
+            int w = Math.max(0, weightProvider.applyAsInt(voter));
+            yesNoWeights.put(voter, w);
             yesNo.put(voter, yesValue);
             return true;
         }
@@ -316,21 +345,26 @@ public class GameVoteManager extends GameManager {
                 if (currentNominee == null) {
                     // nobody nominated anything meaningful -> if this is last round and cannot skip, we cannot auto-pick -> finish with no winner
                     // (Alternatively you could random-pick from remaining; spec didn't request it.)
-                    finish(Finish.noWinner(Type.NOMINATION, round, maxRounds, new HashMap<>(nominations), Map.of()));
+                    finish(Finish.noWinner(Type.NOMINATION, round, maxRounds,
+                                                new HashMap<>(nominations), Map.of(),
+                                                new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                                                computeNominationScores(), computeYesNoScores()));
                     return;
                 }
 
                 // final round & cannot skip => auto-select nominee (no yes/no)
                 if (round == maxRounds && !canSkip) {
                     finish(Finish.winner(currentNominee, Type.NOMINATION, round, maxRounds,
-                            new HashMap<>(nominations), Map.of()));
+                            new HashMap<>(nominations), Map.of(),
+                            new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                            computeNominationScores(), computeYesNoScores()));
                     return;
                 }
 
                 // otherwise: move to YES/NO phase
                 inYesNoPhase = true;
                 yesNo.clear();
-                notifyPlayersCanVote(eligibleVoters, yesNoTitleKey);
+                notifyPlayersCanVote(eligibleVoters, yesNoTitleKey + " " + currentNominee.getColoredName());
                 return;
             }
 
@@ -338,7 +372,9 @@ public class GameVoteManager extends GameManager {
             boolean accepted = computeYesNoAccepts(currentNominee);
             if (accepted) {
                 finish(Finish.winner(currentNominee, Type.NOMINATION, round, maxRounds,
-                        new HashMap<>(nominations), new HashMap<>(yesNo)));
+                        new HashMap<>(nominations), new HashMap<>(yesNo),
+                        new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                        computeNominationScores(), computeYesNoScores()));
                 return;
             } else {
                 // No (or tie) -> prepare next round if any
@@ -346,7 +382,10 @@ public class GameVoteManager extends GameManager {
                 round++;
                 if (round > maxRounds) {
                     // ran out of rounds -> if canSkip==false we would have auto-selected before entering yes/no
-                    finish(Finish.noWinner(Type.NOMINATION, maxRounds, maxRounds, new HashMap<>(nominations), new HashMap<>(yesNo)));
+                    finish(Finish.noWinner(Type.NOMINATION, maxRounds, maxRounds,
+                                                new HashMap<>(nominations), new HashMap<>(yesNo),
+                                                new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                                                computeNominationScores(), computeYesNoScores()));
                     return;
                 }
 
@@ -362,6 +401,40 @@ public class GameVoteManager extends GameManager {
         // ---------------------------------------------
         // Helpers
         // ---------------------------------------------
+
+        private Map<GamePlayer, Integer> computeNominationScores() {
+            Map<GamePlayer, Integer> tally = new HashMap<>();
+            // initialize only votable and not tried when in nomination phase, else include all votable
+            for (GamePlayer gp : allVotable) {
+                if (!triedNominees.contains(gp)) {
+                    tally.put(gp, 0);
+                } else {
+                    tally.putIfAbsent(gp, 0);
+                }
+            }
+            for (Map.Entry<GamePlayer, GamePlayer> e : nominations.entrySet()) {
+                GamePlayer voter = e.getKey();
+                GamePlayer nominee = e.getValue();
+                if (nominee == null) continue;
+                int w = nominationWeights.getOrDefault(voter, 0);
+                tally.computeIfPresent(nominee, (k, v) -> v + Math.max(0, w));
+            }
+            return tally;
+        }
+
+        private Map<Boolean, Integer> computeYesNoScores() {
+            int yes = 0, no = 0;
+            for (Map.Entry<GamePlayer, Boolean> e : yesNo.entrySet()) {
+                Boolean b = e.getValue();
+                if (b == null) continue;
+                int w = yesNoWeights.getOrDefault(e.getKey(), 0);
+                if (Boolean.TRUE.equals(b)) yes += Math.max(0, w); else no += Math.max(0, w);
+            }
+            Map<Boolean, Integer> map = new HashMap<>();
+            map.put(Boolean.TRUE, yes);
+            map.put(Boolean.FALSE, no);
+            return map;
+        }
 
         private void finish(Finish result) {
             finished = true;
@@ -393,9 +466,14 @@ public class GameVoteManager extends GameManager {
                     tally.put(gp, 0);
                 }
             }
-            for (GamePlayer v : nominations.values()) {
-                if (v != null && tally.containsKey(v)) {
-                    tally.put(v, tally.get(v) + 1);
+            for (Map.Entry<GamePlayer, GamePlayer> e : nominations.entrySet()) {
+                GamePlayer voter = e.getKey();
+                GamePlayer nominee = e.getValue();
+                if (nominee != null && tally.containsKey(nominee)) {
+                    int w = nominationWeights.containsKey(voter)
+                            ? Math.max(0, nominationWeights.get(voter))
+                            : Math.max(0, weightProvider.applyAsInt(voter));
+                    tally.put(nominee, tally.get(nominee) + w);
                 }
             }
             int max = 0;
@@ -403,8 +481,8 @@ public class GameVoteManager extends GameManager {
             if (max <= 0) return null;
 
             List<GamePlayer> top = new ArrayList<>();
-            for (Map.Entry<GamePlayer, Integer> e : tally.entrySet()) {
-                if (e.getValue() == max) top.add(e.getKey());
+            for (Map.Entry<GamePlayer, Integer> e2 : tally.entrySet()) {
+                if (e2.getValue() == max) top.add(e2.getKey());
             }
             if (top.isEmpty()) return null;
 
@@ -414,9 +492,13 @@ public class GameVoteManager extends GameManager {
         private boolean computeYesNoAccepts(@Nullable GamePlayer candidate) {
             if (candidate == null) return false;
             int yes = 0, no = 0;
-            for (Boolean b : yesNo.values()) {
-                if (b == null) continue; // skip
-                if (Boolean.TRUE.equals(b)) yes++; else no++;
+            for (Map.Entry<GamePlayer, Boolean> e : yesNo.entrySet()) {
+                Boolean b = e.getValue();
+                if (b == null) continue; // skip (shouldn't happen in yes/no)
+                int w = yesNoWeights.containsKey(e.getKey())
+                        ? Math.max(0, yesNoWeights.get(e.getKey()))
+                        : Math.max(0, weightProvider.applyAsInt(e.getKey()));
+                if (Boolean.TRUE.equals(b)) yes += w; else no += w;
             }
             if (yes == no) return false; // tie = no
             return yes > no;
@@ -425,24 +507,35 @@ public class GameVoteManager extends GameManager {
         private void resolveInstant(Random rng) {
             Map<GamePlayer, Integer> tally = new HashMap<>();
             for (GamePlayer gp : allVotable) tally.put(gp, 0);
-            for (GamePlayer v : nominations.values()) {
-                if (v != null && tally.containsKey(v)) {
-                    tally.put(v, tally.get(v) + 1);
+            for (Map.Entry<GamePlayer, GamePlayer> e : nominations.entrySet()) {
+                GamePlayer voter = e.getKey();
+                GamePlayer target = e.getValue();
+                if (target != null && tally.containsKey(target)) {
+                    int w = nominationWeights.containsKey(voter)
+                            ? Math.max(0, nominationWeights.get(voter))
+                            : Math.max(0, weightProvider.applyAsInt(voter));
+                    tally.put(target, tally.get(target) + w);
                 }
             }
             int max = 0;
             for (int v : tally.values()) max = Math.max(max, v);
 
             if (max <= 0) {
-                finish(Finish.noWinner(Type.INSTANT, 1, 1, new HashMap<>(nominations), Map.of()));
+                finish(Finish.noWinner(Type.INSTANT, 1, 1,
+                                            new HashMap<>(nominations), Map.of(),
+                                            new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                                            computeNominationScores(), computeYesNoScores()));
                 return;
             }
             List<GamePlayer> top = new ArrayList<>();
-            for (Map.Entry<GamePlayer, Integer> e : tally.entrySet()) {
-                if (e.getValue() == max) top.add(e.getKey());
+            for (Map.Entry<GamePlayer, Integer> e2 : tally.entrySet()) {
+                if (e2.getValue() == max) top.add(e2.getKey());
             }
             GamePlayer winner = top.get(rng.nextInt(top.size())); // random among ties
-            finish(Finish.winner(winner, Type.INSTANT, 1, 1, new HashMap<>(nominations), Map.of()));
+            finish(Finish.winner(winner, Type.INSTANT, 1, 1,
+                                        new HashMap<>(nominations), Map.of(),
+                                        new HashMap<>(nominationWeights), new HashMap<>(yesNoWeights),
+                                        computeNominationScores(), computeYesNoScores()));
         }
     }
 
@@ -461,13 +554,23 @@ public class GameVoteManager extends GameManager {
         public final Map<GamePlayer, GamePlayer> finalNominations; // last nomination map collected
         public final Map<GamePlayer, Boolean> finalYesNo;          // last yes/no map collected (if any)
 
+        // New: weight snapshots and aggregated scores
+        public final Map<GamePlayer, Integer> nominationWeights;   // voter -> weight at nomination submit
+        public final Map<GamePlayer, Integer> yesNoWeights;        // voter -> weight at yes/no submit
+        public final Map<GamePlayer, Integer> nominationScoresByTarget; // target -> total weighted nominations
+        public final Map<Boolean, Integer> yesNoScores;            // true -> total YES weight, false -> total NO weight
+
         private Finish(Type type,
                        boolean hasWinner,
                        @Nullable GamePlayer winner,
                        int round,
                        int maxRounds,
                        Map<GamePlayer, GamePlayer> finalNominations,
-                       Map<GamePlayer, Boolean> finalYesNo) {
+                       Map<GamePlayer, Boolean> finalYesNo,
+                       Map<GamePlayer, Integer> nominationWeights,
+                       Map<GamePlayer, Integer> yesNoWeights,
+                       Map<GamePlayer, Integer> nominationScoresByTarget,
+                       Map<Boolean, Integer> yesNoScores) {
             this.type = type;
             this.hasWinner = hasWinner;
             this.winner = winner;
@@ -475,18 +578,30 @@ public class GameVoteManager extends GameManager {
             this.maxRounds = maxRounds;
             this.finalNominations = finalNominations;
             this.finalYesNo = finalYesNo;
+            this.nominationWeights = nominationWeights;
+            this.yesNoWeights = yesNoWeights;
+            this.nominationScoresByTarget = nominationScoresByTarget;
+            this.yesNoScores = yesNoScores;
         }
 
         public static Finish winner(GamePlayer gp, Type type, int round, int maxRounds,
                                     Map<GamePlayer, GamePlayer> noms,
-                                    Map<GamePlayer, Boolean> yn) {
-            return new Finish(type, true, gp, round, maxRounds, noms, yn);
+                                    Map<GamePlayer, Boolean> yn,
+                                    Map<GamePlayer, Integer> nominationWeights,
+                                    Map<GamePlayer, Integer> yesNoWeights,
+                                    Map<GamePlayer, Integer> nominationScoresByTarget,
+                                    Map<Boolean, Integer> yesNoScores) {
+            return new Finish(type, true, gp, round, maxRounds, noms, yn, nominationWeights, yesNoWeights, nominationScoresByTarget, yesNoScores);
         }
 
         public static Finish noWinner(Type type, int round, int maxRounds,
                                       Map<GamePlayer, GamePlayer> noms,
-                                      Map<GamePlayer, Boolean> yn) {
-            return new Finish(type, false, null, round, maxRounds, noms, yn);
+                                      Map<GamePlayer, Boolean> yn,
+                                      Map<GamePlayer, Integer> nominationWeights,
+                                      Map<GamePlayer, Integer> yesNoWeights,
+                                      Map<GamePlayer, Integer> nominationScoresByTarget,
+                                      Map<Boolean, Integer> yesNoScores) {
+            return new Finish(type, false, null, round, maxRounds, noms, yn, nominationWeights, yesNoWeights, nominationScoresByTarget, yesNoScores);
         }
     }
 

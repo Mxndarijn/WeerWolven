@@ -113,4 +113,15 @@ public class GamePlayer {
         }
         return colorData.getColor().getDisplayName() + " <gray>" + Bukkit.getOfflinePlayer(playerUUID).getName();
     }
+
+    @Override
+    public String toString() {
+        return "GamePlayer{" +
+                "roleData=" + roleData.toString() +
+                ", role=" + role.toString() +
+                ", colorData=" + colorData.toString() +
+                ", playerUUID=" + playerUUID +
+                ", alive=" + alive +
+                '}';
+    }
 }

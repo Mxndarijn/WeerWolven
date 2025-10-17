@@ -10,6 +10,7 @@ import me.mxndarijn.weerwolven.managers.GameManager;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.mxndarijn.mxlib.language.LanguageManager;
+import nl.mxndarijn.mxlib.logger.Logger;
 import nl.mxndarijn.mxlib.util.Functions;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -102,6 +103,7 @@ public class GamePlayingEvents extends GameEvent {
         Optional<GamePlayer> gamePlayer = game.getGamePlayerOfPlayer(e.getPlayer().getUniqueId());
         if (gamePlayer.isEmpty())
             return;
+        Logger.logMessage("cancelled block event");
         e.setCancelled(true);
     }
 

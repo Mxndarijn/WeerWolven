@@ -37,7 +37,6 @@ public final class GameEventBus implements EventBus {
     private final AtomicLong seq = new AtomicLong();
 
     @Override
-    @SuppressWarnings("unchecked")
     public <E extends GameBusEvent> AutoCloseable subscribe(
             Class<E> type,
             Priority priority,

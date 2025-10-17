@@ -45,22 +45,6 @@ public enum Interaction {
     WARPED_BUTTON(Material.WARPED_BUTTON),
     STONE_BUTTON(Material.STONE_BUTTON),
     POlISHED_BLACKSTONE_BUTTON(Material.POLISHED_BLACKSTONE_BUTTON),
-    BLACK_BED(Material.BLACK_BED, false),
-    BLUE_BED(Material.BLUE_BED, false),
-    BROWN_BED(Material.BROWN_BED, false),
-    CYAN_BED(Material.CYAN_BED, false),
-    GRAY_BED(Material.GRAY_BED, false),
-    GREEN_BED(Material.GREEN_BED, false),
-    LIGHT_BLUE_BED(Material.LIGHT_BLUE_BED, false),
-    LIGHT_GRAY_BED(Material.LIGHT_GRAY_BED, false),
-    MAGENTA_BED(Material.MAGENTA_BED, false),
-    PINK_BED(Material.PINK_BED, false),
-    LIME_BED(Material.LIME_BED, false),
-    WHITE_BED(Material.WHITE_BED, false),
-    ORANGE_BED(Material.ORANGE_BED, false),
-    YELLOW_BED(Material.YELLOW_BED, false),
-    PURPLE_BED(Material.PURPLE_BED, false),
-    RED_BED(Material.RED_BED, false),
     ACACIA_PRESSURE_PLATE(Material.ACACIA_PRESSURE_PLATE),
     BIRCH_PRESSURE_PLATE(Material.BIRCH_PRESSURE_PLATE),
     CRIMSON_PRESSURE_PLATE(Material.CRIMSON_PRESSURE_PLATE),
@@ -139,6 +123,6 @@ public enum Interaction {
         for (Interaction interaction : values()) {
             if (interaction.getMat() == type) return interaction.defaultValue;
         }
-        return false;
+        return true;
     }
 }

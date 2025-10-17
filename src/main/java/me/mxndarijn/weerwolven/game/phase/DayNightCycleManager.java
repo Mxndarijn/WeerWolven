@@ -28,7 +28,7 @@ public class DayNightCycleManager {
     private BukkitTask transitionTask;
     
     // Transition settings
-    private static final long TRANSITION_TICKS = 100; // How long transition takes (5 seconds)
+    private static final long TRANSITION_TICKS = 200; // How long transition takes (5 seconds)
     private static final long UPDATE_INTERVAL = 2; // Ticks between updates (0.1 seconds)
     
     private boolean isTransitioning = false;

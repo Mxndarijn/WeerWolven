@@ -553,6 +553,10 @@ public class PresetConfigureTool extends WeerWolvenMxItem {
         Player p = e.getPlayer();
         EditSession s = EDIT_STATE.get(p.getUniqueId());
         if (s == null || s.mode != EditMode.WINDOW) return;
+        if(s.preset.getMxWorld().isEmpty())
+            return;
+        if(!s.preset.getMxWorld().get().getWorldUID().equals(e.getBlock().getWorld().getUID()))
+            return;
         e.setCancelled(true);
         Optional<ColorData> cdOpt = s.config.getColor(s.color);
         if (cdOpt.isEmpty()) {

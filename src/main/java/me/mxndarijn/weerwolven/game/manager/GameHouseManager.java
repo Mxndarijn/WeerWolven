@@ -2,6 +2,7 @@ package me.mxndarijn.weerwolven.game.manager;
 
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import nl.mxndarijn.mxlib.logger.Logger;
 import org.bukkit.block.Bed;
 import me.mxndarijn.weerwolven.presets.ColorData;
 import nl.mxndarijn.mxlib.mxworld.MxLocation;
@@ -42,9 +43,20 @@ public class GameHouseManager extends GameManager {
         canOpenDoor.put(player, canOpen);
     }
 
+    public void setCanOpenDoor(UUID playerUuid, boolean canOpen) {
+        if (playerUuid == null) return;
+        game.getGamePlayerOfPlayer(playerUuid).ifPresent(gp -> setCanOpenDoor(gp, canOpen));
+    }
+
+    public void setAllPlayersCanOpenDoors(boolean canOpen) {
+        for (GamePlayer gp : game.getGamePlayers()) {
+            if (gp != null) setCanOpenDoor(gp, canOpen);
+        }
+    }
+
     public boolean canOpenDoor(GamePlayer player) {
         if (player == null) return false;
-        return canOpenDoor.getOrDefault(player, false);
+        return canOpenDoor.getOrDefault(player, true);
     }
 
     // onPlayerReturnHome API
@@ -76,7 +88,6 @@ public class GameHouseManager extends GameManager {
     public void openHouseDoor(GamePlayer gamePlayer, List<GamePlayer> optionalExtraSoundPlayers) {
         Bukkit.getScheduler().runTask(game.getPlugin(), () -> {
             if (gamePlayer == null) return;
-            if (!canOpenDoor(gamePlayer)) return; // respect permission
             boolean changed = toggleDoors(gamePlayer, true);
             if (changed) {
                 playExtraDoorSounds(gamePlayer, optionalExtraSoundPlayers, true);
@@ -98,7 +109,6 @@ public class GameHouseManager extends GameManager {
             Collection<GamePlayer> targets = (players == null || players.isEmpty()) ? game.getGamePlayers() : players;
             for (GamePlayer gp : targets) {
                 if (gp == null) continue;
-                if (!canOpenDoor(gp)) continue;
                 toggleDoors(gp, true);
             }
         });
@@ -177,15 +187,15 @@ public class GameHouseManager extends GameManager {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRightClickBed(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Block clicked = event.getClickedBlock();
         if (clicked == null) return;
         var optionalMxWorld = game.getOptionalMxWorld();
         if (optionalMxWorld.isEmpty()) return;
-        clicked.getWorld();
-        if (!Objects.equals(clicked.getWorld().getUID(), optionalMxWorld.get().getWorldUID())) return;
+        if (!clicked.getWorld().getUID().equals(optionalMxWorld.get().getWorldUID())) return;
+        event.setCancelled(true);
 
         // Find GamePlayer for this player
         Optional<GamePlayer> optionalGamePlayer = game.getGamePlayerOfPlayer(event.getPlayer().getUniqueId());
@@ -200,14 +210,50 @@ public class GameHouseManager extends GameManager {
     }
 
     private static boolean isPlayersOwnBed(Block b, ColorData colorData) {
-        if (b == null || colorData == null || colorData.getColor() == null) return false;
-        var data = b.getBlockData();
-        if (!(data instanceof Bed bed)) return false;
-        return bed.getColor().equals(colorData.getColor().getDyeColor());
+        return b.getType().equals(colorData.getColor().getBedBlock());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerTryOpenOwnDoor(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        Block clicked = event.getClickedBlock();
+        if (clicked == null) return;
+        var optionalMxWorld = game.getOptionalMxWorld();
+        if (optionalMxWorld.isEmpty()) return;
+        if (!clicked.getWorld().getUID().equals(optionalMxWorld.get().getWorldUID())) return;
+
+        // Only handle real doors (exclude trapdoors, gates)
+        if (!(clicked.getBlockData() instanceof Openable) || !clicked.getType().name().endsWith("_DOOR")) return;
+
+        Optional<GamePlayer> optionalGamePlayer = game.getGamePlayerOfPlayer(event.getPlayer().getUniqueId());
+        if (optionalGamePlayer.isEmpty()) return;
+        GamePlayer gp = optionalGamePlayer.get();
+        if (!isPlayersOwnDoor(clicked, gp.getColorData(), clicked.getWorld())) return;
+
+        if (!canOpenDoor(gp)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private static boolean isPlayersOwnDoor(Block block, ColorData colorData, World world) {
+        if (block == null || colorData == null || colorData.getDoorLocations() == null || world == null) return false;
+        Location target = block.getLocation();
+        for (MxLocation mxLoc : colorData.getDoorLocations()) {
+            Location loc = mxLoc.getLocation(world);
+            if (loc != null && loc.equals(target)) return true;
+        }
+        return false;
     }
 
     private void toggleWindows(GamePlayer gamePlayer, boolean open) {
         if (gamePlayer == null) return;
+
+        // Only visually change blocks for the specific player if present
+        var optUuid = gamePlayer.getOptionalPlayerUUID();
+        if (optUuid.isEmpty()) return;
+        Player player = Bukkit.getPlayer(optUuid.get());
+        if (player == null) return;
+
         var optionalMxWorld = gamePlayer.getGame().getOptionalMxWorld();
         if (optionalMxWorld.isEmpty()) return;
         World world = Bukkit.getWorld(optionalMxWorld.get().getWorldUID());
@@ -216,17 +262,16 @@ public class GameHouseManager extends GameManager {
         ColorData colorData = gamePlayer.getColorData();
         if (colorData == null || colorData.getWindowLocations() == null) return;
 
+        // Desired material for the window based on open/close instruction (client-side only)
+        final Material desired = open ? Material.AIR : Material.BLACK_CONCRETE;
+        final BlockData fakeData = desired.createBlockData();
+
         for (MxLocation mxLoc : colorData.getWindowLocations()) {
             if (mxLoc == null) continue;
             Location loc = mxLoc.getLocation(world);
             if (loc == null) continue;
-            Block block = loc.getBlock();
-
-            // Desired material for the window based on open/close instruction
-            final Material desired = open ? Material.AIR : Material.BLACK_CONCRETE;
-            if (block.getType() != desired) {
-                block.setType(desired, false);
-            }
+            // Send a fake block change to only this player; do not modify the real world
+            player.sendBlockChange(loc, fakeData);
         }
     }
 }

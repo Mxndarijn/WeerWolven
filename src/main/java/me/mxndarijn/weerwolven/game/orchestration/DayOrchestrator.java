@@ -3,17 +3,14 @@ package me.mxndarijn.weerwolven.game.orchestration;
 import me.mxndarijn.weerwolven.data.*;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry.AbilityDef;
-import me.mxndarijn.weerwolven.game.bus.events.DayVoteCompletedEvent;
 import me.mxndarijn.weerwolven.game.bus.events.DayVoteWeightEvent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.phase.Phase;
 import me.mxndarijn.weerwolven.game.status.FlagStatus;
 import me.mxndarijn.weerwolven.game.status.StatusKey;
-import nl.mxndarijn.mxlib.language.LanguageKey;
 import nl.mxndarijn.mxlib.language.LanguageManager;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import me.mxndarijn.weerwolven.game.timer.*;
 
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -50,7 +47,7 @@ public final class DayOrchestrator extends PhaseOrchestrator {
     }
 
     /**
-     * Override the default collection to run a town-wide nomination vote.
+     * Override the default collection to run a town-wide nomination vote.+
      * Everyone alive can vote; UI is provided elsewhere. When the vote is
      * closed by another component, the callback will compute weighted results
      * by posting DayVoteWeightEvent per voter, emit DayVoteCompletedEvent,
@@ -58,6 +55,10 @@ public final class DayOrchestrator extends PhaseOrchestrator {
      */
     @Override
     public void runCollection(Runnable onDone) {
+
+        //Players can leave their house
+        game.getGameHouseManager().setAllPlayersCanOpenDoors(false);
+        game.getGameHouseManager().openAllDoors(game.getGamePlayers());
         // Eligible voters and votable players: all alive players
         List<GamePlayer> alive = game.getGamePlayers().stream()
                 .filter(GamePlayer::isAlive)
@@ -67,15 +68,19 @@ public final class DayOrchestrator extends PhaseOrchestrator {
         // 1) Mayor election at the beginning of the day if no mayor status present
         boolean hasMayor = alive.stream().anyMatch(gp -> gp.getStatusStore().has(StatusKey.VOTE_DOUBLE_MAYOR));
         if (!hasMayor) {
-            game.sendMessageToAll("vote mayor");
+            // Start mayor vote and a group timer bound to it
+            String mayorTimerId = "vote:mayor:" + game.getDayNumber();
+            long mayorDuration = 600_000L;
             game.getGameVoteManager().startInstantVote(
                     eligible,
                     alive,
                     false, // publicVotes
                     false,  // allowSelfVote
                     false,
-                    "<blue>Burgemeester",
+                    "<blue>Burgemeester", gp -> 1,
                     finish -> {
+                        // cancel timer on completion
+                        game.getActionTimerService().cancel(mayorTimerId);
                         if (finish.hasWinner && finish.winner != null) {
                             game.sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.MAYOR_ELECTED,List.of(finish.winner.getColoredName()), WeerWolvenChatPrefix.VOTE));
                             finish.winner.getStatusStore().add(new FlagStatus(
@@ -90,6 +95,14 @@ public final class DayOrchestrator extends PhaseOrchestrator {
                         startLynchVote(alive, eligible, onDone);
                     }
             );
+            // Start timer bound to that vote
+            {
+                var spec = new TimerSpec(mayorTimerId, "<blue>Burgemeester", TimerScope.GROUP, eligible, mayorDuration, game::formatVoteAction, ctx -> {
+                    // onTimeout -> resolve vote
+                    game.getGameVoteManager().forceResolve();
+                }, null, null);
+                game.getActionTimerService().addTimer(spec);
+            }
             return; // wait for mayor election callback before proceeding
         }
 
@@ -99,7 +112,8 @@ public final class DayOrchestrator extends PhaseOrchestrator {
 
     private void startLynchVote(List<GamePlayer> alive, Set<GamePlayer> eligible, Runnable onDone) {
         // Start a nomination round; allow skip; top-1 nominee by default
-        game.sendMessageToAll("vote player");
+        String lynchTimerId = "vote:lynch:" + game.getDayNumber();
+        long lynchDuration = 600_000L;
         game.getGameVoteManager().startNominationFlow(
                 eligible,
                 alive,
@@ -107,45 +121,32 @@ public final class DayOrchestrator extends PhaseOrchestrator {
                 true,   // canSkip
                 false,  // publicVotes
                 false,  // allowSelfVote
-                "<blue>Speler uit het dorp stemmen.",
-                "<gray>Ja/Nee",
+                "<blue>Speler uit het dorp stemmen",
+                "<gray>Ja/Nee", gp -> {
+                    DayVoteWeightEvent e = new DayVoteWeightEvent(gp);
+                    game.getGameEventBus().post(e);
+                    return e.getWeight();
+                },
                 finish -> {
-                    // Compute weights per voter and aggregate per candidate using raw nominations
-                    Map<GamePlayer, Integer> weighted = new LinkedHashMap<>();
-                    for (GamePlayer cand : alive) weighted.put(cand, 0);
-                    for (var e : finish.finalNominations.entrySet()) {
-                        GamePlayer voter = e.getKey();
-                        GamePlayer nominee = e.getValue();
-                        if (nominee == null) continue; // skip votes
-                        // Ask listeners for weight
-                        var evt = new DayVoteWeightEvent(voter);
-                        game.getGameEventBus().post(evt);
-                        int w = Math.max(0, evt.getWeight());
-                        weighted.computeIfPresent(nominee, (k, v) -> v + w);
-                    }
+                    // cancel timer on completion
+                    game.getActionTimerService().cancel(lynchTimerId);
 
-                    // Determine winner (highest weighted). If tie or none, winner empty.
-                    Optional<GamePlayer> winner = weighted.entrySet().stream()
-                            .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                            .map(Map.Entry::getKey)
-                            .findFirst();
-                    if (winner.isPresent()) {
-                        int top = weighted.get(winner.get());
-                        long same = weighted.values().stream().filter(v -> v == top).count();
-                        if (same > 1) winner = Optional.empty();
-                    }
-
-                    // Emit completion event with details
-                    game.getGameEventBus().post(new DayVoteCompletedEvent(
-                            weighted,
-                            winner,
-                            finish
-                    ));
+//                    // Emit completion event with details
+//                    game.getGameEventBus().post(new DayVoteCompletedEvent(
+//                            weighted,
+//                            winner,
+//                            finish
+//                    ));
 
                     // Continue orchestration
                     onDone.run();
                 }
         );
+        var spec = new TimerSpec(lynchTimerId, "<blue>Speler uit het dorp stemmen", TimerScope.GROUP, eligible, lynchDuration, game::formatVoteAction, ctx -> {
+            // onTimeout -> resolve vote
+            game.getGameVoteManager().forceResolve();
+        }, null, null);
+        game.getActionTimerService().addTimer(spec);
     }
 
     private boolean hasAbilityAtTiming(Roles role, ActionKind kind, Timing timing) {

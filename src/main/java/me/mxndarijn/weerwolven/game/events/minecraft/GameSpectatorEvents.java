@@ -115,6 +115,8 @@ public class GameSpectatorEvents extends GameEvent {
     public void place(BlockPlaceEvent e) {
         if (!validateWorld(e.getPlayer().getWorld()))
             return;
+        if(game.getHosts().contains(e.getPlayer().getUniqueId()))
+            return;
         if (game.getSpectators().contains(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
             return;

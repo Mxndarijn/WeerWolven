@@ -17,6 +17,10 @@ import me.mxndarijn.weerwolven.game.phase.DefaultPhaseHooks;
 import me.mxndarijn.weerwolven.game.phase.DayNightCycleManager;
 import me.mxndarijn.weerwolven.game.runtime.KillQueue;
 import me.mxndarijn.weerwolven.game.runtime.LoversChainListener;
+import me.mxndarijn.weerwolven.game.runtime.MayorVoteWeightListener;
+import me.mxndarijn.weerwolven.game.timer.ActionTimerService;
+import me.mxndarijn.weerwolven.game.timer.TimerContext;
+import me.mxndarijn.weerwolven.game.timer.TimerFormats;
 import me.mxndarijn.weerwolven.managers.*;
 import me.mxndarijn.weerwolven.presets.Preset;
 import me.mxndarijn.weerwolven.presets.PresetConfig;
@@ -67,6 +71,7 @@ public class Game {
     private final PresetConfig config;
     private final List<GamePlayer> gamePlayers;
     private final GameEventBus gameEventBus = new GameEventBus();
+    private final ActionTimerService actionTimerService = new ActionTimerService(this);
     private final JavaPlugin plugin;
 
     private final MxSupplierScoreBoard hostScoreboard;
@@ -99,6 +104,11 @@ public class Game {
             new me.mxndarijn.weerwolven.game.orchestration.OrchestratorFactory(
                     intentCollector, orchestrationConfig, defaultPolicy, abilityExecs, resolvePolicy, mainExecutor);
     private volatile boolean phaseLoopRunning = false;
+
+    private void registerDefaultAbilityExecutors() {
+        // Register minimal executors so roles have actionable prompts
+        abilityExecs.registerSolo(ActionKind.INSPECT, new me.mxndarijn.weerwolven.game.orchestration.SeerInspectExecutor());
+    }
     
     private GameHouseManager gameHouseManager;
     private GameChatManager gameChatManager;
@@ -181,6 +191,8 @@ public class Game {
         });
         this.spectatorScoreboard.setUpdateTimer(10);
         this.registerRuntimeBusListeners();
+        // Register built-in ability executors (e.g., Seer scaffold)
+        registerDefaultAbilityExecutors();
     }
 
     public static Optional<Game> createGameFromGameInfo(UUID mainHost, GameInfo gameInfo) {
@@ -247,6 +259,7 @@ public class Game {
         busSubs.close(); // reset if called twice
         // subscribe all runtime listeners that react to game-bus events:
         busSubs.add(LoversChainListener.subscribe(this, gameEventBus));
+        busSubs.add(MayorVoteWeightListener.subscribe(this, gameEventBus));
         // busSubs.add(HunterDeathrattleListener.subscribe(this, gameEventBus));
         // busSubs.add(WitchSavePoisonListener.subscribe(this, gameEventBus));
         // etc.
@@ -305,6 +318,7 @@ public class Game {
             // Register runtime listeners and start the phase loop from Night 1
             registerRuntimeBusListeners();
             startPhaseLoop();
+            actionTimerService.start();
         }
         getGameInfo().setStatus(upcomingGameStatus);
         if (upcomingGameStatus == UpcomingGameStatus.FINISHED) {
@@ -391,6 +405,11 @@ public class Game {
     }
 
     public void stopGame() {
+        // stop timers
+        try {
+            actionTimerService.stop();
+        } catch (Exception ignored) {
+        }
         // stop phase loop if running
         stopPhaseLoop();
         sendMessageToAll(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_GAME_STOPPED));
@@ -761,5 +780,14 @@ public class Game {
                 }
             });
         });
+    }
+
+    public String formatVoteAction(TimerContext ctx) {
+        return formatAction(ctx, getGameVoteManager().getVotesCast(), getGameVoteManager().getEligibleVotes(), " votes");
+    }
+
+    public String formatAction(TimerContext ctx, int cast, int eligible, String extra) {
+        long rem = ctx.remainingMs();
+        return ctx.spec().title + " <gray>[" + TimerFormats.mmss(rem) + "] " + " <dark_gray>(<gray>" + cast + "<dark_gray>/<gray>" + eligible + extra + " <dark_gray>)";
     }
 }

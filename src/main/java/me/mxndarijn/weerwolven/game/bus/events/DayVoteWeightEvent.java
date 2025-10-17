@@ -1,5 +1,6 @@
 package me.mxndarijn.weerwolven.game.bus.events;
 
+import lombok.Getter;
 import me.mxndarijn.weerwolven.game.bus.GameBusEvent;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 
@@ -8,6 +9,7 @@ import me.mxndarijn.weerwolven.game.core.GamePlayer;
  * modify the weight of that single vote (e.g., wolves count x2).
  * Default weight is 1. Listeners may multiply or set the weight.
  */
+@Getter
 public final class DayVoteWeightEvent implements GameBusEvent {
     private final GamePlayer voter;
     private int weight;
@@ -16,10 +18,6 @@ public final class DayVoteWeightEvent implements GameBusEvent {
         this.voter = voter;
         this.weight = 1;
     }
-
-    public GamePlayer getVoter() { return voter; }
-
-    public int getWeight() { return weight; }
 
     /** Multiply current weight by a positive factor. */
     public void multiply(int factor) {

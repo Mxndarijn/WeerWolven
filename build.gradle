@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id "com.gradleup.shadow" version "8.3.3"
+    id 'org.hidetake.ssh' version '2.12.0'
 }
 
 group = 'me.mxndarijn'
@@ -35,13 +36,17 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
 
     //MxLib
-    implementation 'com.github.Mxndarijn:MxLib:1.0.22'
+    implementation 'com.github.Mxndarijn:MxLib:1.0.25'
 
     // Lombok - enabled for compileOnly with annotation processors
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // Testing (JUnit 5)
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     compileOnly 'me.clip:placeholderapi:2.11.6'
@@ -67,6 +72,12 @@ tasks {
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21")
+    }
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
     }
 }
 
@@ -96,3 +107,75 @@ processResources {
         expand props
     }
 }
+
+ext.deployHost      = (findProperty('deploy.host') ?: 'localhost').toString()
+ext.deployPort      = (findProperty('deploy.port') ?: '22').toString() as int
+ext.deployUser      = (findProperty('deploy.user') ?: '').toString()
+ext.deployPassword  = (findProperty('deploy.password') ?: '').toString()
+ext.deployRemoteDir = (findProperty('deploy.remoteDir') ?: '/').toString()
+
+ssh.settings {
+    // Accept unknown hosts to avoid interactive prompts in CI; tighten if you maintain known_hosts
+    knownHosts = allowAnyHosts
+}
+
+// Define the remote using your gradle.properties values
+ssh.remotes {
+    venex {
+        host = deployHost
+        user = deployUser
+        port = deployPort
+        // Prefer key-based auth if available; falls back to password from gradle.properties
+        // identity = file("${System.properties['user.home']}/.ssh/id_rsa")
+        password = deployPassword
+    }
+}
+
+// Helper to locate the artifact we want to ship (Shadow plugin -> "-all" classifier by default)
+def artifactProvider = tasks.named('shadowJar') // change to 'jar' if you don't use shadow
+def artifactPath = {
+    def t = artifactProvider.get()
+    return t.archiveFile.get().asFile
+}
+tasks.register('deployToVenex') {
+    group = 'deployment'
+    description = 'Builds the shadow jar and deploys it to Venex over SFTP.'
+
+    dependsOn(artifactProvider)
+
+    doLast {
+        def jarFile = artifactPath()
+        if (!jarFile.exists()) {
+            throw new GradleException("Deploy artifact not found: ${jarFile}")
+        }
+
+        logger.lifecycle("Deploying ${jarFile.name} to ${deployUser}@${deployHost}:${deployRemoteDir} via SFTP (port ${deployPort})")
+
+        ssh.run {
+            session(ssh.remotes.venex) {
+                // 1) CLEAN: delete old Weerwolven*.jar in its own SFTP channel
+                sftp {
+                    try { mkdir(deployRemoteDir) } catch (ignored) { }
+                    def entries = ls(deployRemoteDir)
+                    entries.each { f ->
+                        def name = f.filename
+                        if (name?.toLowerCase()?.startsWith("weerwolven") && name?.toLowerCase()?.endsWith(".jar")) {
+                            logger.lifecycle("Deleting old file: ${name}")
+                            rm("${deployRemoteDir}/${name}")
+                        }
+                    }
+                }
+
+                // 2) UPLOAD: reopen SFTP channel and upload
+                logger.lifecycle("Uploading ${jarFile.name} (${jarFile.length()} bytes)…")
+                put from: jarFile, into: deployRemoteDir
+                logger.lifecycle("Upload finished.")
+            }
+        }
+
+        logger.lifecycle("Deploy complete ✅")
+    }
+
+}
+
+
