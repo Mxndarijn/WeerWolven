@@ -54,7 +54,7 @@ public class GameChatManager extends GameManager {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onAsyncChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         ChatState state = this.currentState;
@@ -229,7 +229,7 @@ public class GameChatManager extends GameManager {
             // Everyone can read, players can chat, spectators cannot chat. Empty prefix by default (null)
             return new ChatState(
                     null,
-                    gp -> true,
+                    GamePlayer::isAlive,
                     gp -> true,
                     id -> false,
                     id -> true
@@ -237,11 +237,11 @@ public class GameChatManager extends GameManager {
         }
 
         public static ChatState everyoneWithPrefix(WeerWolvenChatPrefix prefix) {
-            return new ChatState(prefix, gp -> true, gp -> true, id -> false, id -> true);
+            return new ChatState(prefix, GamePlayer::isAlive, gp -> true, id -> false, id -> true);
         }
 
         public static ChatState onlyRoleCanChat(WeerWolvenChatPrefix prefix, Roles role, boolean spectatorsMaySend) {
-            Predicate<GamePlayer> canSend = gp -> gp != null && gp.getRole() == role;
+            Predicate<GamePlayer> canSend = gp -> gp != null && gp.getRole() == role && gp.isAlive();
             Predicate<UUID> specSend = spectatorsMaySend ? id -> true : id -> false;
             return new ChatState(prefix, canSend, gp -> true, specSend, id -> true);
         }
@@ -255,7 +255,7 @@ public class GameChatManager extends GameManager {
         }
 
         public static ChatState onlyWithStatus(WeerWolvenChatPrefix prefix, StatusKey key) {
-            Predicate<GamePlayer> hasStatus = gp -> gp != null && gp.getStatusStore().has(key);
+            Predicate<GamePlayer> hasStatus = gp -> gp != null && gp.getStatusStore().has(key) && gp.isAlive();
             // Only players with the status can send and receive. Spectators cannot send or receive.
             return new ChatState(prefix, hasStatus, hasStatus, id -> false, id -> false);
         }

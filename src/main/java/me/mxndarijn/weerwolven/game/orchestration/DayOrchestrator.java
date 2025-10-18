@@ -4,6 +4,7 @@ import me.mxndarijn.weerwolven.data.*;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry.AbilityDef;
 import me.mxndarijn.weerwolven.game.bus.events.DayVoteWeightEvent;
+import me.mxndarijn.weerwolven.game.bus.events.PlayerEliminatedEvent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.manager.GameChatManager;
@@ -14,6 +15,7 @@ import me.mxndarijn.weerwolven.game.status.FlagStatus;
 import me.mxndarijn.weerwolven.game.status.StatusKey;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import me.mxndarijn.weerwolven.game.timer.*;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -135,18 +137,23 @@ public final class DayOrchestrator extends PhaseOrchestrator {
                     return e.getWeight();
                 },
                 finish -> {
-                    // cancel timer on completion
                     game.getActionTimerService().cancel(lynchTimerId);
-
-//                    // Emit completion event with details
-//                    game.getGameEventBus().post(new DayVoteCompletedEvent(
-//                            weighted,
-//                            winner,
-//                            finish
-//                    ));
-
-                    // Continue orchestration
-                    onDone.run();
+                    if (finish.hasWinner && finish.winner != null) {
+                        GamePlayer winner = finish.winner;
+                        game.getGameEventBus().post(new PlayerEliminatedEvent(winner, null, PlayerEliminatedEvent.Cause.VOTED_OUT));
+                        var eliminateTimerId = "eliminate:vote:" + game.getDayNumber();
+                        var spec = new TimerSpec(eliminateTimerId, "<blue>Speler Opoffering", TimerScope.PER_PLAYER, Set.of(winner), 60_000L, ctx -> game.formatAction(ctx, 0, 1, ""), ctx -> {
+                            Optional<Player> p = winner.getBukkitPlayer();
+                            if (p.isPresent()) {
+                                p.get().damage(100000);
+                            } else {
+                                winner.setAlive(false);
+                            }
+                            game.getActionTimerService().cancel(eliminateTimerId);
+                            onDone.run();
+                        }, null, null);
+                        game.getActionTimerService().addTimer(spec);
+                    }
                 }
         );
         var spec = new TimerSpec(lynchTimerId, "<blue>Speler uit het dorp stemmen", TimerScope.GROUP, eligible, lynchDuration, game::formatVoteAction, ctx -> {

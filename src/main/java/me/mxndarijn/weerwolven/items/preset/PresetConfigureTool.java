@@ -557,6 +557,7 @@ public class PresetConfigureTool extends WeerWolvenMxItem {
             return;
         if(!s.preset.getMxWorld().get().getWorldUID().equals(e.getBlock().getWorld().getUID()))
             return;
+        Logger.logMessage("Cancel block place");
         e.setCancelled(true);
         Optional<ColorData> cdOpt = s.config.getColor(s.color);
         if (cdOpt.isEmpty()) {

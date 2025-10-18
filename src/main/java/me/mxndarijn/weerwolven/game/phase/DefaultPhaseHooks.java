@@ -6,7 +6,7 @@ import me.mxndarijn.weerwolven.game.bus.events.AttackIncomingEvent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.runtime.EliminateQueue;
-import me.mxndarijn.weerwolven.game.runtime.PendingKill;
+import me.mxndarijn.weerwolven.game.runtime.PendingElimination;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,14 @@ public final class DefaultPhaseHooks implements PhaseHooks {
 
     @Override
     public void applyPreventsAndSaves(Game game, GameEventBus bus) {
-        EliminateQueue queue = game.getEliminateQueue(); // you exposed getKillQueue() earlier
+        EliminateQueue queue = game.getEliminateQueue();
         if (queue.isEmpty()) return;
 
         // Take a snapshot of pending, then rebuild the queue with only allowed hits.
         var snapshot = new ArrayList<>(queue.view());
         queue.clear();
 
-        for (PendingKill pk : snapshot) {
+        for (PendingElimination pk : snapshot) {
             GamePlayer target = pk.target();
             GamePlayer source = pk.source();
 
@@ -55,7 +55,7 @@ public final class DefaultPhaseHooks implements PhaseHooks {
     }
 
     @Override
-    public List<java.util.UUID> applyAllQueuedKills(Game game, GameEventBus bus) {
+    public List<java.util.UUID> applyAllQueuedEliminations(Game game, GameEventBus bus) {
         var died = game.getEliminateQueue().commitAll(game, bus); // posts PlayerDiedEvent for each
         return toUuidList(died);
     }
@@ -63,9 +63,9 @@ public final class DefaultPhaseHooks implements PhaseHooks {
     @Override
     public void runAftermath(Game game, GameEventBus bus, List<java.util.UUID> justDied) {
         // Typical deathrattles (Hunter/Wreker/Junior) and chain effects (Lovers) are implemented
-        // as bus listeners that may propose more kills into the queue during PlayerDiedEvent handling.
+        // as bus listeners that may propose more eliminations into the queue during PlayerDiedEvent handling.
 
-        // Keep committing proposed kills until stable.
+        // Keep committing proposed eliminations until stable.
         int safety = 0;
         while (!game.getEliminateQueue().isEmpty() && safety++ < 100) {
             game.getEliminateQueue().commitAll(game, bus);

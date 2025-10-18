@@ -1,14 +1,19 @@
 package me.mxndarijn.weerwolven.game.orchestration.executor;
 
+import me.mxndarijn.weerwolven.data.WeerWolvenChatPrefix;
+import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.game.manager.GameHouseManager;
 import me.mxndarijn.weerwolven.game.timer.TimerScope;
 import me.mxndarijn.weerwolven.game.timer.TimerSpec;
 import nl.mxndarijn.mxlib.inventory.MxItemClicked;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
 import nl.mxndarijn.mxlib.item.Pair;
+import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
+import nl.mxndarijn.mxlib.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -173,6 +178,17 @@ public class AbilityExecutorHelper {
         // Track which players have arrived home
         final Set<GamePlayer> completed = new HashSet<>();
         final int total = actors.size();
+
+        String instruction = LanguageManager.getInstance()
+                .getLanguageString(WeerWolvenLanguageText.GO_HOME_INSTRUCTION);
+        actors.forEach(gp -> {
+            gp.getBukkitPlayer().ifPresent(p -> {
+                MessageUtil.sendMessageToPlayer(p, instruction);
+            });
+
+        });
+        game.sendMessageToHosts(LanguageManager.getInstance()
+                .getLanguageString(WeerWolvenLanguageText.GO_HOME_INSTRUCTION_HOST, WeerWolvenChatPrefix.HOST_LOG));
         
         var houseMgr = game.getGameHouseManager();
         
@@ -260,7 +276,8 @@ public class AbilityExecutorHelper {
         return goHome(actors, game, timerId, 45_000L);
     }
 
-    private static void cleanupHomeCallbacks(me.mxndarijn.weerwolven.game.manager.GameHouseManager houseMgr, List<GamePlayer> players) {
+    private static void cleanupHomeCallbacks(GameHouseManager houseMgr, List<GamePlayer> players) {
+        houseMgr.closeAllDoors(players);
         for (GamePlayer gp : players) {
             houseMgr.clearOnPlayerReturnHome(gp);
         }

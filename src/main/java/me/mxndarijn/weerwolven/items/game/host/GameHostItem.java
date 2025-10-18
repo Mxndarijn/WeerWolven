@@ -1,8 +1,11 @@
 package me.mxndarijn.weerwolven.items.game.host;
 
+import me.mxndarijn.weerwolven.data.Team;
 import me.mxndarijn.weerwolven.data.UpcomingGameStatus;
 import me.mxndarijn.weerwolven.data.WeerWolvenLanguageText;
 import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.core.win.WinConditionText;
+import me.mxndarijn.weerwolven.game.core.win.WinResult;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.chatinput.MxChatInputManager;
@@ -77,6 +80,7 @@ public class GameHostItem extends WeerWolvenMxItem {
                                             16,
                                             (mxInv1, e2) -> {
                                                 game.setGameStatus(UpcomingGameStatus.FINISHED);
+                                                game.stopGame(new WinResult(Team.SOLO, List.of(), WinConditionText.NO_ONE));
                                                 p.closeInventory();
                                             })
                                     .setItem(MxSkullItemStackBuilder.create(1)

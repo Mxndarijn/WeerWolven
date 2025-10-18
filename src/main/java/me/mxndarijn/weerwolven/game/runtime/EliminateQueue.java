@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class EliminateQueue {
-    private final List<PendingKill> pending = new ArrayList<>();
+    private final List<PendingElimination> pending = new ArrayList<>();
 
     public void clear() { pending.clear(); }
     public boolean isEmpty() { return pending.isEmpty(); }
-    public List<PendingKill> view() { return List.copyOf(pending); }
+    public List<PendingElimination> view() { return List.copyOf(pending); }
 
     public void propose(GamePlayer target, GamePlayer source, PlayerEliminatedEvent.Cause cause) {
         if (target == null || !target.isAlive()) return;
-        pending.add(new PendingKill(target, source, cause == null ? PlayerEliminatedEvent.Cause.OTHER : cause));
+        pending.add(new PendingElimination(target, source, cause == null ? PlayerEliminatedEvent.Cause.OTHER : cause));
     }
 
     /** Apply all queued kills, mark players dead, and post events. */

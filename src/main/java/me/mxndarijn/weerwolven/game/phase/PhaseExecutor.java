@@ -199,7 +199,7 @@ public final class PhaseExecutor {
         postReaction(bus, ReactionWindowEvent.WITCH_POISON);
         postReaction(bus, ReactionWindowEvent.RESURRECT);
 
-        var justDied = hooks.applyAllQueuedKills(game, bus);
+        var justDied = hooks.applyAllQueuedEliminations(game, bus);
         hooks.runAftermath(game, bus, justDied);
 
         hooks.cleanupStatuses(game);

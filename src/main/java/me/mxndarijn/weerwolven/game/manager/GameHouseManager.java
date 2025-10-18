@@ -195,11 +195,9 @@ public class GameHouseManager extends GameManager {
         var optionalMxWorld = game.getOptionalMxWorld();
         if (optionalMxWorld.isEmpty()) return;
         if (!clicked.getWorld().getUID().equals(optionalMxWorld.get().getWorldUID())) return;
-        event.setCancelled(true);
-
-        // Find GamePlayer for this player
         Optional<GamePlayer> optionalGamePlayer = game.getGamePlayerOfPlayer(event.getPlayer().getUniqueId());
         if (optionalGamePlayer.isEmpty()) return;
+        event.setCancelled(true);
         GamePlayer gp = optionalGamePlayer.get();
         if (!isPlayersOwnBed(clicked, gp.getColorData())) return;
 
@@ -277,5 +275,9 @@ public class GameHouseManager extends GameManager {
 
     public void openAllWindows(List<GamePlayer> gamePlayers) {
         gamePlayers.forEach(this::openHouseWindows);
+    }
+
+    public void closeAllHouseWindows(List<GamePlayer> gamePlayers) {
+        gamePlayers.forEach(this::closeHouseWindows);
     }
 }
