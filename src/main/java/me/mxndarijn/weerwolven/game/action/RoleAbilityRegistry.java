@@ -31,7 +31,8 @@ public final class RoleAbilityRegistry {
     private static final int INIT_CUPIDO        = 30;  // reaction window B (late)
     private static final int INIT_SEER_INSPECT  = 50;  // info after protects
     private static final int INIT_SPY_WATCH     = 55;  // info, after seer
-    private static final int INIT_SK_KILL       = 65;  // solo kill before team apply? (up to your plan)
+    private static final int INIT_SK_ELIMINATE  = 65;  // solo eliminate before team apply? (up to your plan)
+    private static final int INIT_WW_ELIMINATE  = 60;  // solo eliminate before team apply? (up to your plan)
     private static final int INIT_WITCH_SAVE    = 10;  // reaction window A (early)
     private static final int INIT_WITCH_POISON  = 90;  // reaction window B (late)
 
@@ -70,7 +71,11 @@ public final class RoleAbilityRegistry {
 
         // ---- Solo killer ----
         MAP.put(Roles.SERIAL_KILLER, List.of(
-                new AbilityDef(ActionKind.SOLO_KILL, Timing.NIGHT, ResolveMode.SERIAL, INIT_SK_KILL, false)
+                new AbilityDef(ActionKind.SOLO_ELIMINATE, Timing.NIGHT, ResolveMode.SERIAL, INIT_SK_ELIMINATE, false)
+        ));
+
+        MAP.put(Roles.WEREWOLF, List.of(
+                new AbilityDef(ActionKind.TEAM_ELIMINATE, Timing.NIGHT, ResolveMode.TEAM_AGGREGATED, INIT_WW_ELIMINATE, false)
         ));
     }
 

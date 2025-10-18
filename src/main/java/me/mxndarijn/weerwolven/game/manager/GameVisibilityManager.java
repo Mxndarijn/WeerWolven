@@ -2,9 +2,12 @@ package me.mxndarijn.weerwolven.game.manager;
 
 import me.mxndarijn.weerwolven.data.Roles;
 import me.mxndarijn.weerwolven.data.Team;
+import me.mxndarijn.weerwolven.data.WeerWolvenPrefix;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.status.StatusKey;
+import nl.mxndarijn.mxlib.logger.LogLevel;
+import nl.mxndarijn.mxlib.logger.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -32,7 +35,13 @@ public class GameVisibilityManager extends GameManager {
     }
 
     public void setCurrentState(VisibilityState state) {
-        if (state == null) return;
+        if (state == null) {
+            Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                "Attempted to set null visibility state");
+            return;
+        }
+        Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+            "Setting visibility state: everyoneSeesEveryone=" + state.everyoneSeesEveryone);
         this.currentState = state;
         applyCurrentState();
     }
@@ -44,11 +53,17 @@ public class GameVisibilityManager extends GameManager {
     public void applyCurrentState() {
         Bukkit.getScheduler().runTask(game.getPlugin(), () -> {
             VisibilityState state = this.currentState;
+            Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                "Applying visibility state for game");
 
             // Prepare viewer pools
             List<UUID> hosts = new ArrayList<>(game.getHosts());
             List<GamePlayer> players = new ArrayList<>(game.getGamePlayers());
             List<UUID> spectators = new ArrayList<>(game.getSpectators());
+            
+            Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                String.format("Visibility pools - Hosts: %d, Players: %d, Spectators: %d", 
+                    hosts.size(), players.size(), spectators.size()));
 
             // Prepare Player handles
             Map<UUID, Player> onlineById = new HashMap<>();
@@ -74,12 +89,17 @@ public class GameVisibilityManager extends GameManager {
             }
 
             // For each viewer, decide visibility for each target that is a host or game player.
+            int visibilityChanges = 0;
             for (Map.Entry<UUID, Player> viewerEntry : onlineById.entrySet()) {
                 UUID viewerId = viewerEntry.getKey();
                 Player viewer = viewerEntry.getValue();
                 boolean viewerIsHost = hosts.contains(viewerId);
                 boolean viewerIsSpectator = spectators.contains(viewerId);
                 @Nullable GamePlayer viewerGp = gpById.get(viewerId);
+
+                Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                    String.format("Processing viewer: %s (host=%b, spectator=%b, player=%b)", 
+                        viewer.getName(), viewerIsHost, viewerIsSpectator, viewerGp != null));
 
                 for (Map.Entry<UUID, Player> targetEntry : onlineById.entrySet()) {
                     UUID targetId = targetEntry.getKey();
@@ -110,8 +130,16 @@ public class GameVisibilityManager extends GameManager {
                     // Apply per-viewer visibility
                     if (visible) viewer.showPlayer(game.getPlugin(), target);
                     else viewer.hidePlayer(game.getPlugin(), target);
+                    
+                    visibilityChanges++;
+                    Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                        String.format("  %s -> %s: %s", viewer.getName(), target.getName(), 
+                            visible ? "VISIBLE" : "HIDDEN"));
                 }
             }
+            
+            Logger.logMessage(LogLevel.DEBUG, WeerWolvenPrefix.DEBUG_HIGHLIGHT, 
+                String.format("Visibility state applied - %d visibility relations processed", visibilityChanges));
         });
     }
 
@@ -162,6 +190,10 @@ public class GameVisibilityManager extends GameManager {
                                                 Predicate<UUID> spectatorCanSee,
                                                 boolean everyoneSeesEveryone) {
             return new VisibilityState(canSee, spectatorCanSee, everyoneSeesEveryone);
+        }
+
+        public static VisibilityState noOne() {
+            return new VisibilityState((a, b) -> false, id -> false, false);
         }
     }
 }

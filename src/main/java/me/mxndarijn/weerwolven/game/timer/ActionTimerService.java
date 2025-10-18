@@ -164,4 +164,12 @@ public final class ActionTimerService {
     private static void safeAccept(Consumer<TimerContext> c, TimerContext ctx) {
         try { c.accept(ctx); } catch (Exception ignored) {}
     }
+
+    public List<TimerSpec> getTimers() {
+        return byId.values().stream().toList();
+    }
+
+    public void forceEnd(TimerSpec spec) {
+        spec.durationMs = 0;
+    }
 }

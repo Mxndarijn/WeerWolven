@@ -1,4 +1,4 @@
-package me.mxndarijn.weerwolven.game.orchestration;
+package me.mxndarijn.weerwolven.game.orchestration.executor;
 
 import me.mxndarijn.weerwolven.data.ActionKind;
 

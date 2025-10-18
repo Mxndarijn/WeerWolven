@@ -8,6 +8,10 @@ import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry.AbilityDef;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.game.manager.GameChatManager;
+import me.mxndarijn.weerwolven.game.manager.GameVisibilityManager;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
+import nl.mxndarijn.mxlib.logger.Logger;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,11 +27,11 @@ public final class NightOrchestrator extends PhaseOrchestrator {
             ActionKind.PROTECT,
             // INFO
             ActionKind.INSPECT, ActionKind.AURA_SCAN, ActionKind.COMPARE_TEAM,
-            ActionKind.SPY_WATCH, ActionKind.TRACK_KILL_ACTIVITY,
+            ActionKind.SPY_WATCH, ActionKind.TRACK_ELIMINATE_ACTIVITY,
             // SETUPS
             ActionKind.COUPLE, ActionKind.BREAD, ActionKind.TRAP_ARM, ActionKind.MASK_AS_SHAMAN,
             // KILLS
-            ActionKind.SOLO_KILL, ActionKind.TEAM_KILL, ActionKind.BLESS
+            ActionKind.TEAM_ELIMINATE,ActionKind.SOLO_ELIMINATE, ActionKind.BLESS
     );
 
     public NightOrchestrator(Game game,
@@ -43,10 +47,25 @@ public final class NightOrchestrator extends PhaseOrchestrator {
     @Override protected List<ActionKind> orderedKinds() { return NIGHT_ORDER; }
 
     @Override
+    public void runCollection(Runnable onDone) {
+        final var phaseAtStart = game.getPhase();
+
+        game.getGameChatManager().setCurrentState(GameChatManager.ChatState.noOne());
+        game.getGameVisibilityManager().setCurrentState(GameVisibilityManager.VisibilityState.noOne());
+
+        Logger.logMessage("Running night: " + phaseAtStart);
+        runKindsSequentially(0, () -> {
+            Logger.logMessage("Finished night: " + phaseAtStart);
+            onDone.run();
+        });
+    }
+
+    @Override
     protected List<GamePlayer> actorsFor(ActionKind kind) {
         return game.getGamePlayers().stream()
                 .filter(GamePlayer::isAlive)
                 .filter(gp -> hasNightAbility(gp.getRole(), kind))
+                .filter(gp -> canExecuteKind(gp, kind))
                 .sorted(Comparator.comparing(gp -> gp.getColorData().getColor().getDisplayName()))
                 .collect(Collectors.toList());
     }

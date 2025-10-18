@@ -274,4 +274,8 @@ public class GameHouseManager extends GameManager {
             player.sendBlockChange(loc, fakeData);
         }
     }
+
+    public void openAllWindows(List<GamePlayer> gamePlayers) {
+        gamePlayers.forEach(this::openHouseWindows);
+    }
 }

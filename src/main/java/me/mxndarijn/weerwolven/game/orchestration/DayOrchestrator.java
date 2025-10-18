@@ -6,6 +6,9 @@ import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry.AbilityDef;
 import me.mxndarijn.weerwolven.game.bus.events.DayVoteWeightEvent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.game.manager.GameChatManager;
+import me.mxndarijn.weerwolven.game.manager.GameVisibilityManager;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
 import me.mxndarijn.weerwolven.game.phase.Phase;
 import me.mxndarijn.weerwolven.game.status.FlagStatus;
 import me.mxndarijn.weerwolven.game.status.StatusKey;
@@ -57,8 +60,12 @@ public final class DayOrchestrator extends PhaseOrchestrator {
     public void runCollection(Runnable onDone) {
 
         //Players can leave their house
-        game.getGameHouseManager().setAllPlayersCanOpenDoors(false);
+        game.getGameHouseManager().setAllPlayersCanOpenDoors(true);
         game.getGameHouseManager().openAllDoors(game.getGamePlayers());
+        game.getGameHouseManager().openAllWindows(game.getGamePlayers());
+        game.getGameVisibilityManager().setCurrentState(GameVisibilityManager.VisibilityState.everyone());
+        game.getGameChatManager().setCurrentState(GameChatManager.ChatState.defaultState());
+
         // Eligible voters and votable players: all alive players
         List<GamePlayer> alive = game.getGamePlayers().stream()
                 .filter(GamePlayer::isAlive)

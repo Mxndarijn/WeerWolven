@@ -3,6 +3,9 @@ package me.mxndarijn.weerwolven.game.core;
 import lombok.Getter;
 import me.mxndarijn.weerwolven.WeerWolven;
 import me.mxndarijn.weerwolven.data.*;
+import me.mxndarijn.weerwolven.game.action.ActionHandler;
+import me.mxndarijn.weerwolven.game.action.InspectLogHandler;
+import me.mxndarijn.weerwolven.game.action.JailLogHandler;
 import me.mxndarijn.weerwolven.game.bus.AutoCloseableGroup;
 import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.events.minecraft.*;
@@ -10,12 +13,15 @@ import me.mxndarijn.weerwolven.game.manager.GameChatManager;
 import me.mxndarijn.weerwolven.game.manager.GameHouseManager;
 import me.mxndarijn.weerwolven.game.manager.GameVisibilityManager;
 import me.mxndarijn.weerwolven.game.manager.GameVoteManager;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
+import me.mxndarijn.weerwolven.game.orchestration.executor.SeerInspectExecutor;
+import me.mxndarijn.weerwolven.game.orchestration.executor.WerewolfEliminateExecutor;
 import me.mxndarijn.weerwolven.game.phase.Phase;
 import me.mxndarijn.weerwolven.game.phase.PhaseExecutor;
 import me.mxndarijn.weerwolven.game.phase.PhaseHooks;
 import me.mxndarijn.weerwolven.game.phase.DefaultPhaseHooks;
 import me.mxndarijn.weerwolven.game.phase.DayNightCycleManager;
-import me.mxndarijn.weerwolven.game.runtime.KillQueue;
+import me.mxndarijn.weerwolven.game.runtime.EliminateQueue;
 import me.mxndarijn.weerwolven.game.runtime.LoversChainListener;
 import me.mxndarijn.weerwolven.game.runtime.MayorVoteWeightListener;
 import me.mxndarijn.weerwolven.game.timer.ActionTimerService;
@@ -86,7 +92,7 @@ public class Game {
     private boolean firstStart = false;
     private BukkitTask updateGameUpdater;
 
-    private final KillQueue killQueue = new KillQueue();
+    private final EliminateQueue eliminateQueue = new EliminateQueue();
     private final AutoCloseableGroup busSubs = new AutoCloseableGroup();
     
     // Phase execution system
@@ -97,7 +103,7 @@ public class Game {
     private final me.mxndarijn.weerwolven.game.orchestration.IntentCollector intentCollector = new me.mxndarijn.weerwolven.game.orchestration.IntentCollector();
     private final me.mxndarijn.weerwolven.game.orchestration.OrchestrationConfig orchestrationConfig = new me.mxndarijn.weerwolven.game.orchestration.OrchestrationConfig();
     private final me.mxndarijn.weerwolven.game.orchestration.DefaultDecisionPolicy defaultPolicy = new me.mxndarijn.weerwolven.game.orchestration.SimpleDefaultDecisionPolicy();
-    private final me.mxndarijn.weerwolven.game.orchestration.AbilityExecutorRegistry abilityExecs = new me.mxndarijn.weerwolven.game.orchestration.AbilityExecutorRegistry();
+    private final AbilityExecutorRegistry abilityExecs = new AbilityExecutorRegistry();
     private final me.mxndarijn.weerwolven.game.orchestration.ResolvePolicy resolvePolicy = new me.mxndarijn.weerwolven.game.orchestration.ResolvePolicy();
     private final java.util.concurrent.Executor mainExecutor = Runnable::run; // direct executor for now
     private final me.mxndarijn.weerwolven.game.orchestration.OrchestratorFactory orchestratorFactory =
@@ -107,7 +113,9 @@ public class Game {
 
     private void registerDefaultAbilityExecutors() {
         // Register minimal executors so roles have actionable prompts
-        abilityExecs.registerSolo(ActionKind.INSPECT, new me.mxndarijn.weerwolven.game.orchestration.SeerInspectExecutor());
+        abilityExecs.registerSolo(ActionKind.INSPECT, new SeerInspectExecutor());
+        abilityExecs.registerTeam(ActionKind.TEAM_ELIMINATE, new WerewolfEliminateExecutor());
+        abilityExecs.registerSolo(ActionKind.JAIL, new me.mxndarijn.weerwolven.game.orchestration.executor.JailerJailExecutor());
     }
     
     private GameHouseManager gameHouseManager;
@@ -132,7 +140,12 @@ public class Game {
         
         // Initialize phase execution system
         this.cycleManager = new DayNightCycleManager(this, plugin);
-        this.phaseExecutor = new PhaseExecutor(Map.of(), phaseHooks);
+        var handlers = new EnumMap<ActionKind, ActionHandler>(ActionKind.class);
+
+        handlers.put(ActionKind.INSPECT, new InspectLogHandler());
+        handlers.put(ActionKind.JAIL, new JailLogHandler());
+
+        this.phaseExecutor = new PhaseExecutor(handlers, phaseHooks);
 
         this.hostScoreboard = new MxSupplierScoreBoard(plugin, () -> {
             return ScoreBoard.GAME_HOST.getTitle(new HashMap<>() {{
@@ -193,6 +206,22 @@ public class Game {
         this.registerRuntimeBusListeners();
         // Register built-in ability executors (e.g., Seer scaffold)
         registerDefaultAbilityExecutors();
+        // Configure orchestration settings
+        setupOrchestration();
+    }
+
+    /**
+     * Configures orchestration-related settings including timeouts and resolve policies.
+     * This method centralizes all orchestrationConfig and resolvePolicy setup.
+     */
+    private void setupOrchestration() {
+        // Ensure orchestrator timeout for INSPECT matches Seer UI timer
+        this.orchestrationConfig.setTimeout(ActionKind.INSPECT, 45_000L);
+        // Timeout for Jailer jail selection
+        this.orchestrationConfig.setTimeout(ActionKind.JAIL, 45_000L);
+        this.orchestrationConfig.setTimeout(ActionKind.TEAM_ELIMINATE, 300_000L);
+        // Configure TEAM_ELIMINATE to use team aggregation
+        this.resolvePolicy.aggregated(ActionKind.TEAM_ELIMINATE);
     }
 
     public static Optional<Game> createGameFromGameInfo(UUID mainHost, GameInfo gameInfo) {
@@ -733,8 +762,8 @@ public class Game {
         if (phaseLoopRunning) return;
         phaseLoopRunning = true;
         if (this.phase == Phase.LOBBY) {
-            this.dayNumber = 1; // Night 1
-            setPhase(Phase.NIGHT, true).thenRun(() ->
+            this.dayNumber = 1;
+            setPhase(Phase.DAY, true).thenRun(() ->
                     Bukkit.getScheduler().runTask(plugin, this::runCurrentPhase)
             );
         } else if (this.phase != Phase.END) {
@@ -788,6 +817,6 @@ public class Game {
 
     public String formatAction(TimerContext ctx, int cast, int eligible, String extra) {
         long rem = ctx.remainingMs();
-        return ctx.spec().title + " <gray>[" + TimerFormats.mmss(rem) + "] " + " <dark_gray>(<gray>" + cast + "<dark_gray>/<gray>" + eligible + extra + " <dark_gray>)";
+        return ctx.spec().title + " <gray>[" + TimerFormats.mmss(rem) + "] " + " <dark_gray>(<gray>" + cast + "<dark_gray>/<gray>" + eligible + extra + "<dark_gray>)";
     }
 }

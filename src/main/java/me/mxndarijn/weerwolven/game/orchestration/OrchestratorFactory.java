@@ -1,6 +1,7 @@
 package me.mxndarijn.weerwolven.game.orchestration;
 
 import me.mxndarijn.weerwolven.game.core.Game;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
 import me.mxndarijn.weerwolven.game.phase.Phase;
 
 import java.util.concurrent.Executor;

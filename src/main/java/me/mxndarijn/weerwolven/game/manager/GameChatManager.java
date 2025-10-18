@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 /**
@@ -39,6 +40,18 @@ public class GameChatManager extends GameManager {
 
     public void setCurrentState(ChatState state) {
         if (state != null) this.currentState = state;
+        if(this.currentState.prefix != null) {
+            AtomicBoolean anyPlayers = new AtomicBoolean(false);
+            this.game.getGamePlayers().stream().filter(this.currentState.canSend).forEach(gp -> {
+               gp.getBukkitPlayer().ifPresent(p -> {
+                   anyPlayers.set(true);
+                   MessageUtil.sendMessageToPlayer(p, LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_CHAT_YOU_CAN_NOW_TYPE, this.currentState.prefix));
+               });
+            });
+            if(anyPlayers.get()) {
+                this.game.sendMessageToHosts(LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_PRIVATE_CHAT_ACTIVATED, List.of(this.currentState.prefix.getName()), WeerWolvenChatPrefix.HOST_LOG));
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -185,6 +198,10 @@ public class GameChatManager extends GameManager {
             this.canReceive = Objects.requireNonNullElse(canReceive, gp -> true);
             this.spectatorCanSend = Objects.requireNonNullElse(spectatorCanSend, id -> false);
             this.spectatorCanReceive = Objects.requireNonNullElse(spectatorCanReceive, id -> true);
+        }
+
+        public static ChatState noOne() {
+            return new ChatState(null, gp -> false, gp -> false, id -> false, id -> false);
         }
 
         @Nullable

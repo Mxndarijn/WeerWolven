@@ -7,6 +7,7 @@ import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry;
 import me.mxndarijn.weerwolven.game.action.RoleAbilityRegistry.AbilityDef;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
 
 import java.util.Comparator;
 import java.util.List;
@@ -37,6 +38,7 @@ public final class DawnOrchestrator extends PhaseOrchestrator {
         return game.getGamePlayers().stream()
                 .filter(GamePlayer::isAlive)
                 .filter(gp -> hasAbilityAtTiming(gp.getRole(), kind, Timing.DAWN))
+                .filter(gp -> canExecuteKind(gp, kind))
                 .sorted(Comparator.comparing(gp -> gp.getColorData().getColor().getDisplayName()))
                 .collect(Collectors.toList());
     }

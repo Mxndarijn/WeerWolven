@@ -1,5 +1,5 @@
-// me.mxndarijn.weerwolven.game.orchestration.AbilityExecutorRegistry
-package me.mxndarijn.weerwolven.game.orchestration;
+// me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry
+package me.mxndarijn.weerwolven.game.orchestration.executor;
 
 import me.mxndarijn.weerwolven.data.ActionKind;
 

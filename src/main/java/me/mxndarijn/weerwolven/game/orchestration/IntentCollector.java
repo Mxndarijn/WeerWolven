@@ -14,4 +14,8 @@ public final class IntentCollector {
         list.clear();
         return out;
     }
+
+    public void addAll(List<ActionIntent> actionIntents) {
+        list.addAll(actionIntents);
+    }
 }

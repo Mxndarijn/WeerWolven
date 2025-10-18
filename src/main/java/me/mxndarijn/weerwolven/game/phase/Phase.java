@@ -27,9 +27,9 @@ public enum Phase {
     /** Default transition; your Game loop can override when needed. */
     public Phase next() {
         return switch (this) {
-            case LOBBY, DUSK -> NIGHT;
+            case DUSK -> NIGHT;
             case NIGHT -> DAWN;
-            case DAWN  -> DAY;
+            case LOBBY, DAWN  -> DAY;
             case DAY   -> DUSK;
             case END   -> END;
         };

@@ -81,11 +81,11 @@ public final class PhaseExecutor {
             ActionKind.PROTECT,
             // INFO
             ActionKind.INSPECT, ActionKind.AURA_SCAN, ActionKind.COMPARE_TEAM,
-            ActionKind.SPY_WATCH, ActionKind.TRACK_KILL_ACTIVITY,
+            ActionKind.SPY_WATCH, ActionKind.TRACK_ELIMINATE_ACTIVITY,
             // SETUPS
             ActionKind.COUPLE, ActionKind.BREAD, ActionKind.TRAP_ARM, ActionKind.MASK_AS_SHAMAN,
             // KILLS (initial proposals)
-            ActionKind.SOLO_KILL, ActionKind.TEAM_KILL, ActionKind.BLESS
+            ActionKind.SOLO_ELIMINATE, ActionKind.TEAM_ELIMINATE, ActionKind.BLESS
     );
 
     private static final List<ActionKind> DAWN_ORDER = List.of(
@@ -276,7 +276,7 @@ public final class PhaseExecutor {
             var ordered = list.stream()
                     .sorted(Comparator
                             .comparingInt(ActionIntent::initiative)
-                            .thenComparing(i -> hooks.seatIndex(game, i.actor())))
+                            .thenComparing(i -> hooks.seatIndex(game, i.actors().getFirst())))
                     .toList();
             handler.resolveSerial(ordered, game, bus);
         } else {

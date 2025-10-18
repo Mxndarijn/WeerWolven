@@ -5,7 +5,7 @@ import me.mxndarijn.weerwolven.game.bus.GameEventBus;
 import me.mxndarijn.weerwolven.game.bus.events.AttackIncomingEvent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
-import me.mxndarijn.weerwolven.game.runtime.KillQueue;
+import me.mxndarijn.weerwolven.game.runtime.EliminateQueue;
 import me.mxndarijn.weerwolven.game.runtime.PendingKill;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public final class DefaultPhaseHooks implements PhaseHooks {
 
     @Override
     public void applyPreventsAndSaves(Game game, GameEventBus bus) {
-        KillQueue queue = game.getKillQueue(); // you exposed getKillQueue() earlier
+        EliminateQueue queue = game.getEliminateQueue(); // you exposed getKillQueue() earlier
         if (queue.isEmpty()) return;
 
         // Take a snapshot of pending, then rebuild the queue with only allowed hits.
@@ -56,7 +56,7 @@ public final class DefaultPhaseHooks implements PhaseHooks {
 
     @Override
     public List<java.util.UUID> applyAllQueuedKills(Game game, GameEventBus bus) {
-        var died = game.getKillQueue().commitAll(game, bus); // posts PlayerDiedEvent for each
+        var died = game.getEliminateQueue().commitAll(game, bus); // posts PlayerDiedEvent for each
         return toUuidList(died);
     }
 
@@ -67,8 +67,8 @@ public final class DefaultPhaseHooks implements PhaseHooks {
 
         // Keep committing proposed kills until stable.
         int safety = 0;
-        while (!game.getKillQueue().isEmpty() && safety++ < 100) {
-            game.getKillQueue().commitAll(game, bus);
+        while (!game.getEliminateQueue().isEmpty() && safety++ < 100) {
+            game.getEliminateQueue().commitAll(game, bus);
         }
         // If you want to detect runaway loops, log when safety is hit.
     }

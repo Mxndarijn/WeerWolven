@@ -10,7 +10,7 @@ import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import me.mxndarijn.weerwolven.game.manager.GameHouseManager;
 import me.mxndarijn.weerwolven.game.manager.GameVisibilityManager;
-import me.mxndarijn.weerwolven.game.timer.TimerFormats;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
 import me.mxndarijn.weerwolven.game.timer.TimerScope;
 import me.mxndarijn.weerwolven.game.timer.TimerSpec;
 import nl.mxndarijn.mxlib.language.LanguageManager;
@@ -78,12 +78,11 @@ public final class DuskOrchestrator extends PhaseOrchestrator {
                                 .getLanguageString(WeerWolvenLanguageText.GAME_ARRIVED_HOME));
                     }
                 });
+                houseMgr.closeHouseDoor(gp, null);
+                houseMgr.setCanOpenDoor(gp, false);
                 // When all are home, finish early
                 if (completed.size() >= total) {
                     // Everyone is home: hide players from each other and cleanup houses
-                    game.getGameVisibilityManager().setCurrentState(
-                            GameVisibilityManager.VisibilityState.predicate((a, b) -> false, id -> false, false)
-                    );
                     cleanupDuskHome(houseMgr, alive);
                     // cancel timer
                     game.getActionTimerService().cancel("dusk:home:" + game.getDayNumber());
@@ -162,6 +161,7 @@ public final class DuskOrchestrator extends PhaseOrchestrator {
         return game.getGamePlayers().stream()
                 .filter(GamePlayer::isAlive)
                 .filter(gp -> hasAbilityAtTiming(gp.getRole(), kind, Timing.DUSK))
+                .filter(gp -> canExecuteKind(gp, kind))
                 .sorted(Comparator.comparing(gp -> gp.getColorData().getColor().getDisplayName()))
                 .collect(Collectors.toList());
     }

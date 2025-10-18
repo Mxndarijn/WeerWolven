@@ -32,7 +32,7 @@ public final class LoversChainListener {
             if (partner == null || !partner.isAlive()) return;
 
             // Queue partner eliminated in aftermath
-            game.getKillQueue().propose(partner, e.target(), PlayerEliminatedEvent.Cause.LOVERS_LINK);
+            game.getEliminateQueue().propose(partner, e.target(), PlayerEliminatedEvent.Cause.LOVERS_LINK);
         }));
         return group;
     }

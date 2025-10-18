@@ -12,7 +12,7 @@ public final class TimerSpec {
     public final String title;
     public final TimerScope scope;
     public final Set<GamePlayer> audience;
-    public final long durationMs;
+    public long durationMs;
 
     public volatile long startedAtMs; // set by service
 

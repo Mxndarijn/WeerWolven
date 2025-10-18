@@ -124,4 +124,8 @@ public class GamePlayer {
                 ", alive=" + alive +
                 '}';
     }
+
+    public Optional<Player> getBukkitPlayer() {
+        return getOptionalPlayerUUID().map(Bukkit::getPlayer);
+    }
 }

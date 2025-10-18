@@ -6,11 +6,15 @@ import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.items.WeerWolvenMxItem;
 import me.mxndarijn.weerwolven.managers.GameWorldManager;
 import nl.mxndarijn.mxlib.chatinput.MxChatInputManager;
+import nl.mxndarijn.mxlib.inventory.MxInventoryIndex;
 import nl.mxndarijn.mxlib.inventory.MxInventoryManager;
 import nl.mxndarijn.mxlib.inventory.MxInventorySlots;
+import nl.mxndarijn.mxlib.inventory.MxItemClicked;
 import nl.mxndarijn.mxlib.inventory.menu.MxDefaultMenuBuilder;
+import nl.mxndarijn.mxlib.inventory.menu.MxListInventoryBuilder;
 import nl.mxndarijn.mxlib.item.MxDefaultItemStackBuilder;
 import nl.mxndarijn.mxlib.item.MxSkullItemStackBuilder;
+import nl.mxndarijn.mxlib.item.Pair;
 import nl.mxndarijn.mxlib.language.LanguageManager;
 import nl.mxndarijn.mxlib.util.MessageUtil;
 import nl.mxndarijn.mxlib.util.MxWorldFilter;
@@ -22,7 +26,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class GameHostItem extends WeerWolvenMxItem {
@@ -120,65 +126,39 @@ public class GameHostItem extends WeerWolvenMxItem {
                             });
                         })
                 .setItem(MxSkullItemStackBuilder.create(1)
-                                .setSkinFromHeadsData("book")
-                                .setName("<gray>Votes Beheren")
+                                .setSkinFromHeadsData("skip-glass")
+                                .setName("<gray>Acties Overslaan")
                                 .addBlankLore()
-                                .addLore("<yellow>Klik hier om votes te beheren")
+                                .addLore("<yellow>Klik hier om acties te beheren")
                                 .build(),
                         16,
                         (mxInv, e13) -> {
-                            return;
+                            List<Pair<ItemStack, MxItemClicked>> list = new ArrayList<>();
+                            game.getActionTimerService().getTimers().forEach(timerSpec -> {
+                                list.add(new Pair<>(
+                                        MxSkullItemStackBuilder.create(1)
+                                                .setSkinFromHeadsData("skip-glass")
+                                                .setName(timerSpec.title)
+                                                .addBlankLore()
+                                                .addLore("<dark_gray>ID: <gray>" + timerSpec.id)
+                                                .build(),
+                                        (mxInv1, ee) -> {
+                                            game.getActionTimerService().forceEnd(timerSpec);
+                                            MessageUtil.sendMessageToPlayer(ee.getWhoClicked(), LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_HOST_TOOL_CANCEL_TIMESPEC, List.of(timerSpec.title)));
+                                            MxInventoryManager.getInstance().addAndOpenInventory((Player) ee.getWhoClicked(), mxInv);
+                                        }
+                                ));
+                            });
+                            MxInventoryManager.getInstance().addAndOpenInventory((Player) e13.getWhoClicked(),MxListInventoryBuilder.create("<gray>Acties", MxInventorySlots.THREE_ROWS)
+                                    .defaultCancelEvent(true)
+                                    .setPrevious(mxInv)
+                                    .setShowPageNumbers(false)
+                                    .setAvailableSlots(MxInventoryIndex.ROW_ONE_TO_TWO)
+                                    .setListItems(list)
+                                    .build());
+
                         })
-//                            MxInventoryManager.getInstance().addAndOpenInventory(p,
-//                                    MxDefaultMenuBuilder.create("<gray>Beheer Votes", MxInventorySlots.THREE_ROWS)
-//                                            .setPrevious(mxInv)
-//                                            .setItem(MxSkullItemStackBuilder.create(1)
-//                                                            .setSkinFromHeadsData("book")
-//                                                            .setName("<gray>Toggle Votes")
-//                                                            .addBlankLore()
-//                                                            .addLore("<gray>Status: " + (game.isPlayersCanEndVote() ? "<green>Spelers kunnen de votes beeindigen" : "<red>Spelers kunnen niet de votes beeindigen"))
-//                                                            .addBlankLore()
-//                                                            .addLore("<yellow>Klik hier om de status te togglen")
-//                                                            .build(),
-//                                                    13,
-//                                                    (mxInv12, e14) -> {
-//                                                        game.setPlayersCanEndVote(!game.isPlayersCanEndVote());
-//                                                        p.closeInventory();
-//                                                        MessageUtil.sendMessageToPlayer(p, (game.isPlayersCanEndVote() ? "<green>Spelers kunnen de votes beeindigen." : "<red>Spelers kunnen niet de votes beeindigen."));
-//                                                    }
-//                                            )
-//                                            .setItem(MxSkullItemStackBuilder.create(1)
-//                                                            .setSkinFromHeadsData("anonymous")
-//                                                            .setName("<gray>Stem-anoniemheid " + (game.areVotesAnonymous() ? "<red>Uitschakelen" : "<green>Inschakelen"))
-//                                                            .addBlankLore()
-//                                                            .addLore("<gray>Status: " + (game.areVotesAnonymous() ? "<green>Anoniem" : "<red>Publiek") + "<gray>.")
-//                                                            .addBlankLore()
-//                                                            .addLore("<yellow>Klik hier om de status te togglen.")
-//                                                            .build(),
-//                                                    10,
-//                                                    (mxInv12, e14) -> {
-//                                                        game.setVotesAnonymous(!game.areVotesAnonymous());
-//                                                        p.closeInventory();
-//                                                        game.sendMessageToAll("<gray>Stemmen zijn nu " + (game.areVotesAnonymous() ? "<green>Anoniem<gray>." : "<red>Publiek<gray>."));
-//                                                    }
-//                                            )
-//                                            .setItem(MxSkullItemStackBuilder.create(1)
-//                                                            .setSkinFromHeadsData("message-icon")
-//                                                            .setName("<gray>Laat resultaten zien.")
-//                                                            .addBlankLore()
-//                                                            .addLore("<yellow>Klik hier om de vote resultaten te bekijken.")
-//                                                            .build(),
-//                                                    16,
-//                                                    (mxInv12, e14) -> {
-//                                                        game.showVotingResults("Host");
-//                                                        p.closeInventory();
-//                                                    }
-//                                            )
-//                                            .build()
-//
-//                            );
-//                        }
-//                )
+
                 .build());
 
     }

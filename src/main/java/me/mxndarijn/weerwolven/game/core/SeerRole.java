@@ -22,6 +22,6 @@ public class SeerRole extends InspectRole{
 
     @Override
     public String getCompletedMessage(GamePlayer gp) {
-        return LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_SEER_PLAYER_SELECTED, List.of(gp.getColoredName()));
+        return LanguageManager.getInstance().getLanguageString(WeerWolvenLanguageText.GAME_SEER_PLAYER_RESULT, List.of(gp.getColoredName(), gp.getRole().getRoleWithColor()));
     }
 }

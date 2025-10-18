@@ -43,6 +43,10 @@ public class GameVoteManager extends GameManager {
         return state.votesCast();
     }
 
+    public void stopVote() {
+        this.state = null;
+    }
+
     public enum Type { NOMINATION, INSTANT }
 
     // Compatibility types for existing UI (GameVoteItem)
@@ -109,8 +113,17 @@ public class GameVoteManager extends GameManager {
         notifyPlayersCanVote(s.eligibleVoters, nominationTitleKey);
     }
 
+
     /**
-     * Start an INSTANT vote.
+     * Starts an instant voting flow where eligible players can vote for a selected candidate.
+     *
+     * @param eligibleVoters a set of players who are permitted to cast votes
+     * @param votablePlayers a list of players who can be voted on
+     * @param publicVotes whether the voting process should display "player voted (x/y)" messages
+     * @param allowSelfVote whether voters are allowed to cast votes for themselves
+     * @param titleKey a key representing the title or name of the voting process
+     * @param weightProvider a function to determine the weight of each player's vote
+     * @param onFinish a callback executed when the voting process is finished, containing the result
      */
     public synchronized void startInstantVote(Set<GamePlayer> eligibleVoters,
                                              List<GamePlayer> votablePlayers,
@@ -123,6 +136,19 @@ public class GameVoteManager extends GameManager {
         startInstantVote(eligibleVoters, votablePlayers, publicVotes, allowSelfVote, true, titleKey, weightProvider, onFinish);
     }
 
+    /**
+     * Starts an instant voting process where eligible players can vote for a candidate
+     * from a specified list of votable players.
+     *
+     * @param eligibleVoters a set of players who are permitted to cast votes
+     * @param votablePlayers a list of players who can be selected as voting candidates
+     * @param publicVotes indicates whether the voting process should display "player voted (x/y)" messages
+     * @param allowSelfVote determines if voters are allowed to cast a vote for themselves
+     * @param canSkip specifies if voters are allowed to abstain from voting
+     * @param titleKey a key representing the title or name of the voting process
+     * @param weightProvider a function to calculate the weight of each player's vote
+     * @param onFinish a callback executed upon the completion of the voting process, containing the resulting outcome
+     */
     public synchronized void startInstantVote(Set<GamePlayer> eligibleVoters,
                                               List<GamePlayer> votablePlayers,
                                               boolean publicVotes,

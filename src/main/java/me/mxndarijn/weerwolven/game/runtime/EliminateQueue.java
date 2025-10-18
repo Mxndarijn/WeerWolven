@@ -9,7 +9,7 @@ import me.mxndarijn.weerwolven.game.core.GamePlayer;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class KillQueue {
+public final class EliminateQueue {
     private final List<PendingKill> pending = new ArrayList<>();
 
     public void clear() { pending.clear(); }

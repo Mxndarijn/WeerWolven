@@ -1,5 +1,5 @@
-// me.mxndarijn.weerwolven.game.orchestration.TeamAbilityExecutor
-package me.mxndarijn.weerwolven.game.orchestration;
+// me.mxndarijn.weerwolven.game.orchestration.executor.TeamAbilityExecutor
+package me.mxndarijn.weerwolven.game.orchestration.executor;
 
 import me.mxndarijn.weerwolven.game.action.ActionIntent;
 import me.mxndarijn.weerwolven.game.core.Game;
@@ -11,4 +11,5 @@ import java.util.concurrent.CompletableFuture;
 /** Executes a team/aggregated ability (e.g., Wolves voting together). */
 public interface TeamAbilityExecutor {
     CompletableFuture<List<ActionIntent>> executeTeam(Game game, List<GamePlayer> actors, long timeoutMs);
+    List<ActionIntent> defaultExecute(Game game, List<GamePlayer> actors, long timeoutMs);
 }

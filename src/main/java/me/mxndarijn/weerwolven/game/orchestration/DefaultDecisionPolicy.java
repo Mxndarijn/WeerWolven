@@ -11,7 +11,7 @@ import java.util.List;
 /** What to do if a player/team times out, cancels, or otherwise fails to submit. */
 public interface DefaultDecisionPolicy {
 
-    /** Solo actor timed out. Return zero or more fallback intents (usually zero = skip). */
+    /** Solo actors timed out. Return zero or more fallback intents (usually zero = skip). */
     List<ActionIntent> decideSolo(Game game, GamePlayer actor, ActionKind kind);
 
     /**

@@ -5,12 +5,18 @@ import me.mxndarijn.weerwolven.data.ActionKind;
 import me.mxndarijn.weerwolven.game.action.ActionIntent;
 import me.mxndarijn.weerwolven.game.core.Game;
 import me.mxndarijn.weerwolven.game.core.GamePlayer;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutor;
+import me.mxndarijn.weerwolven.game.orchestration.executor.AbilityExecutorRegistry;
+import me.mxndarijn.weerwolven.game.orchestration.executor.TeamAbilityExecutor;
 import me.mxndarijn.weerwolven.game.phase.ResolveMode;
+import me.mxndarijn.weerwolven.game.status.StatusKey;
+import nl.mxndarijn.mxlib.logger.LogLevel;
 import nl.mxndarijn.mxlib.logger.Logger;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -49,7 +55,7 @@ public abstract class PhaseOrchestrator {
     /** Who is eligible to act for this kind right now. */
     protected abstract List<GamePlayer> actorsFor(ActionKind kind);
 
-    /** Optional: side-effect before prompting a SOLO actor of a given kind (e.g., open doors). */
+    /** Optional: side-effect before prompting a SOLO actors of a given kind (e.g., open doors). */
     protected void beforePrompt(ActionKind kind, GamePlayer actor) {}
 
     /** Optional: hook after some intents were produced (or defaulted). */
@@ -65,7 +71,15 @@ public abstract class PhaseOrchestrator {
         });
     }
 
-    private void runKindsSequentially(int idx, Runnable onDone) {
+    public boolean canExecuteKind(GamePlayer gp, ActionKind kind) {
+        // Let PREVENT actions run so Jailers/Sleepers/Saboteurs can still act
+        if (kind == ActionKind.JAIL || kind == ActionKind.SLEEP || kind == ActionKind.SABOTAGE) return true;
+
+        var st = gp.getStatusStore();
+        return !st.has(StatusKey.JAILED_TONIGHT) && !st.has(StatusKey.SLEEPS_TONIGHT);
+    }
+
+    public void runKindsSequentially(int idx, Runnable onDone) {
         var kinds = orderedKinds();
         if (kinds == null || kinds.isEmpty() || idx >= kinds.size()) {
             // Dispatch completion on the configured main executor to avoid deep re-entrancy
@@ -74,13 +88,16 @@ public abstract class PhaseOrchestrator {
         }
 
         var kind = kinds.get(idx);
+        Logger.logMessage("Running kind " + kind + " for phase " + game.getPhase());
         var actors = actorsFor(kind);
         if (actors == null || actors.isEmpty()) { runKindsSequentially(idx + 1, onDone); return; }
 
         var mode = resolvePolicy.mode(kind);
+        Logger.logMessage("Kind " + kind + " resolves in " + mode);
         if (mode == ResolveMode.TEAM_AGGREGATED) {
             // TEAM path
             Optional<TeamAbilityExecutor> teamExec = execs.team(kind);
+            Logger.logMessage("Kind " + kind + " resolves in TEAM_AGGREGATED, executorPresent=" + teamExec.isPresent());
             if (teamExec.isEmpty()) { runKindsSequentially(idx + 1, onDone); return; }
 
             long timeout = config.timeoutMs(kind);
@@ -89,7 +106,7 @@ public abstract class PhaseOrchestrator {
             withTimeoutList(
                     fut,
                     timeout,
-                    () -> defaults.decideTeam(game, actors, kind),
+                    () -> teamExec.get().defaultExecute(game, actors, timeout),
                     intents -> {
                         if (intents != null) intents.forEach(collector::add);
                         afterIntents(kind, actors, intents == null ? List.of() : intents);
@@ -97,7 +114,6 @@ public abstract class PhaseOrchestrator {
                     }
             );
         } else {
-            // SOLO path (prompt actors one-by-one)
             promptActorsSequentially(kind, actors, () -> runKindsSequentially(idx + 1, onDone));
         }
     }
@@ -123,7 +139,14 @@ public abstract class PhaseOrchestrator {
         withTimeoutList(
                 fut,
                 timeout,
-                () -> defaults.decideSolo(game, actor, kind),
+                () -> {
+                    try {
+                        return soloExec.get().defaultExecute(game, actor, timeout);
+                    } catch (Exception ex) {
+                        Logger.logMessage(LogLevel.ERROR, "Error during defaultExecute for kind " + kind + ", actors=" + actor + ": " + ex.getMessage());
+                        return List.of();
+                    }
+                },
                 intents -> {
                     if (intents != null) intents.forEach(collector::add);
                     afterIntents(kind, List.of(actor), intents == null ? List.of() : intents);
@@ -138,7 +161,7 @@ public abstract class PhaseOrchestrator {
                                  Supplier<List<ActionIntent>> onTimeout,
                                  Consumer<List<ActionIntent>> done) {
         final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        final java.util.concurrent.atomic.AtomicBoolean finished = new java.util.concurrent.atomic.AtomicBoolean(false);
+        final AtomicBoolean finished = new AtomicBoolean(false);
 
         final ScheduledFuture<?> task = scheduler.schedule(() -> {
             try {
